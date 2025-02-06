@@ -1,3 +1,10 @@
-# Ignore all report files except .tex files
-reports/*
-!reports/*.tex
+*.log
+*.fls
+*.pdf
+*.gz
+*.aux
+*.out
+*.toc
+*.fdb_latexmk
+*.synctex.gz
+*.synctex(busy)

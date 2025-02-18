@@ -1,23 +1,44 @@
 \documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[
+    backend=biber,
+    style=apa,
+    citestyle=authoryear
+]{biblatex}
 
-\title{Async Synergy: A Study of the Asynchronous Programming Landscape}
+\addbibresource{references.bib}
+
+
+\title{Multi-core Synergy: A Study in performance improvements utilizing multi-core threading in python}
 \author{J. Wolffrom}
 \date{\today}
 
-\begin{document}
+\begin{document} 
 
 \maketitle
+\newpage
 
 \begin{abstract}
-This paper explores the topic of [insert topic here]. The purpose of this study is to [insert purpose here]. The methodology used includes [insert methodology here]. The results indicate that [insert results here]. The implications of these findings are discussed in detail.
+
 \end{abstract}
+\newpage
 
 \tableofcontents
 
 \newpage
 \section{Introduction}
 
-The introduction section provides an overview of the topic being studied. It sets the context for the research and outlines the main objectives. This paper aims to address the following questions: [insert research questions here]. The significance of this study lies in [insert significance here]. Previous research has shown that [insert background information here]. However, there is a gap in the literature regarding [insert gap here]. This study seeks to fill this gap by [insert how the study fills the gap here].
+According to Moore's Law, the number of transistors on a microchip doubles every two years, leading to an exponential increase in computing power. 
+However, this trend has slowed down in recent years, as the physical limitations of silicon-based technology have been reached \parencite{Mattson2014}.
+\begin{quote}
+    \textit{However, reaching higher clock speeds also posed significant challenges. Increased clock speeds meant higher heat generation and power consumption, necessitating more robust cooling solutions and improved power management techniques. The quest for ever-higher clock speeds eventually reached a plateau due to these limitations, leading to a shift in CPU design principles.} 
+    \parencite{mscodes} 
+\end{quote}
+
+This is a testament most experts agreen on, as seen in 
+
+As a result, the focus has shifted from increasing clock speeds to adding more cores to a processor. This has led to the rise of multi-core processors, which contain multiple processing units on a single chip. 
+These processors can execute multiple orders simultaneiously, which can lead to significant performance improvements in software applications 
 
 \subsection{Problem Statement}
 
@@ -47,5 +68,10 @@ The literature review section provides an overview of the existing research on t
 The first theme to be explored is the different asynchronous programming models that exist. This section will provide an overview of the main models, including [insert models here]. The benefits and downsides of each model will be discussed, as well as the scenarios in which they are most appropriate.
 
 \subsection{Challenges of Asynchronous Programming}
+
+
+\newpage
+\section{References}
+\printbibliography
 
 \end{document}

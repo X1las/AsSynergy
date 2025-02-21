@@ -5,11 +5,12 @@
     style=apa,
     citestyle=authoryear
 ]{biblatex}
-
+\setlength{\bibitemsep}{0.5em}
 \addbibresource{references.bib}
+\usepackage{parskip}
+\usepackage{xcolor}
 
-
-\title{Multi-core Synergy: A Study in performance improvements utilizing multi-core threading in python}
+\title{Multi-core Synergy: A Study of performance improvements utilizing multi-core threading in python}
 \author{J. Wolffrom}
 \date{\today}
 
@@ -30,46 +31,97 @@
 
 According to Moore's Law, the number of transistors on a microchip doubles every two years, leading to an exponential increase in computing power. 
 However, this trend has slowed down in recent years, as the physical limitations of silicon-based technology have been reached \parencite{Mattson2014}.
+
 \begin{quote}
-    \textit{However, reaching higher clock speeds also posed significant challenges. Increased clock speeds meant higher heat generation and power consumption, necessitating more robust cooling solutions and improved power management techniques. The quest for ever-higher clock speeds eventually reached a plateau due to these limitations, leading to a shift in CPU design principles.} 
-    \parencite{mscodes} 
+    \textit{\textcolor{darkgray}{Increased clock speeds meant higher heat generation and power consumption, 
+    necessitating more robust cooling solutions and improved power management techniques. 
+    The quest for ever-higher clock speeds eventually reached a plateau due to these limitations, leading to a shift in CPU design principles.}} 
+    - \parencite{mscodes} 
 \end{quote}
 
-This is a testament most experts agreen on, as seen in 
-
 As a result, the focus has shifted from increasing clock speeds to adding more cores to a processor. This has led to the rise of multi-core processors, which contain multiple processing units on a single chip. 
-These processors can execute multiple orders simultaneiously, which can lead to significant performance improvements in software applications 
+These processors can execute multiple orders simultaneiously, which can lead to significant performance improvements in software applications, however, a discrepancy can be found in the communities that rely on performance improvements.
 
-\subsection{Problem Statement}
+\begin{quote}
+    \textit{\textcolor{darkgray}{While there are some PC games that love CPUs with a dozen or more cores, they’re few and far between. 
+    Instead, finding an 8-core, 16-thread processor with a high clock speed and a lot of L3 Cache is going to get you further than just adding more CPU cores to the equation. }} 
+    - \parencite{Thomas2025}
+\end{quote}
 
-The problem statement then becomes: How can we leverage the power of asynchronous programming to improve the performance of software applications? 
-\newline
+Within the gaming communities we're seeing a trend of diminishing returns, whereas what we should be seeing is an equivalance. There is a concensus that multi-core threading is the future of software development, and it has been for several years now, even as far back as 2005 \parencite{mscodes}.
 
-This question is important because [insert why the question is important here]. The goal of this study is to provide a comprehensive analysis of the asynchronous programming landscape and identify best practices for leveraging this technology.
+\subsection{The Problem Area}
 
-\subsubsection{Research Questions}
+The question then remains, why are we not seeing the performance improvements that we should be seeing?
 
-This question can be split into further sub-questions, such as:
+If multi-core threading is the future, then it is essential to understand why it is not delivering the expected performance improvements it has the potential to deliver. 
+As such, this study aims to address this question by investigating the challenges of multi-core threading and identifying potential solutions to improve performance.
+
+\subsubsection{Research Question}
+
+This being said, there are limits to what can be achieved by the short span of this study, and as such we will be focusing on implementing a solution in python, 
+as it is a language that is widely used and has a large community of developers.
+
+The research question that we will be addressing is then as follows:
+
+\begin{quote}
+    \textit{How can we improve the performance of software applications by utilizing multi-core threading in Python?}
+\end{quote}
+
+This question can then be further broken down into the following sub-questions:
 
 \begin{itemize}
-    \item What is asynchronous programming?
-    \item What are the main challenges of asynchronous programming?
-    \item What are the best practices for implementing asynchronous programming?
+    \item What is the basic makeup of a cpu?
+    \item What is a thread, and how can it be accessed in python?
+    \item What frameworks are commonly used for multi-core threading, and how can they be extended to use in python?
+    \item What are the challenges of multi-core threading, and how can they be overcome?
 \end{itemize}
 
-These questions include topics such as what different asynchronous programming models exist, their benefits and downsides as well as how to implement them in practice.
+These questions serve as a guide for the study and will help to structure the research process, beginning with a review of the literature on the topic.
 
-\section{Literature Review}
+\section{Methodology}
 
-The literature review section provides an overview of the existing research on the topic. It summarizes the key findings from previous studies and identifies the gaps in the literature. The literature review is organized by theme, with each section focusing on a specific aspect of the topic.
+Overall introduction to the methodology, and how it will be structured.
 
-\subsection{Asynchronous Programming Models}
+\subsection{CPU Architecture}
 
-The first theme to be explored is the different asynchronous programming models that exist. This section will provide an overview of the main models, including [insert models here]. The benefits and downsides of each model will be discussed, as well as the scenarios in which they are most appropriate.
+The difference between performace cores and "optional" cores
 
-\subsection{Challenges of Asynchronous Programming}
+\subsubsection{Threading}
 
+Threading and multi-core utilization 
 
+\subsection{Python}
+
+If there turns out to be something that limits the performance of python in multi-core threading this might be useful to talk about.
+
+\subsection{Concurrency and Parallelism}
+
+Presentation on the two paradigms, and how they both are used in multi-core threading.
+
+\subsubsection{Asynchronous Programming}
+
+Short subsection on async, and how it uses a single thread to run multiple tasks using methods to suspend itself whilst awaiting changes.
+
+\subsubsection{Subroutines and Coroutines}
+
+Small introduction to Subroutines and Coroutines as methods, and liking them directly to "def" in python.
+
+Inclue something about time.sleep in python, it syspends a thread just like async.
+
+\section{Data Collection}
+
+Section on how the data was collected, what was collected and the code used. 
+
+Potentially rename the section to something more fitting.
+
+\section{Results}
+
+\section{Discussion}
+
+Include thoughts about other programming languages.
+
+\section{Conclusion}
 \newpage
 \section{References}
 \printbibliography

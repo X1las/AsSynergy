@@ -87,6 +87,224 @@ Overall introduction to the methodology, and how it will be structured.
 
 The difference between performace cores and "optional" cores
 
+\subsubsection{Instruction Pipeline}
+The execution of each instruction is partitioned into several steps that are performed by dedicated hardware units one after another
+
+
+These hardware units are also called pipeline stages
+
+Overlaps multiple instructions
+
+Is similar to an assembly line
+
+Typical numbers of pipeline stages lie inbetween 2 and 26 stages
+
+\subsubsection{Clock Frequency}
+
+The number of clock cycles per second
+
+Also called clock speed
+
+Meazured in hertz which is 1/second(abbreviated as Hz)
+
+\subsubsection{Clock Cycle Time}
+
+The clock frequency F determines the clock cycle time T of the processor
+
+Formula: T = 1/F
+
+Usually the time needed for the execution of one instruction
+
+\subsubsection{Parallel execution time}
+
+Consists of the time it takes for all cores or processors to finish a given program
+
+Also the time for data exchange or synchronization
+
+Should be smaller than the time for a synchronized single core process to be worth it
+
+Influenced by idle times
+
+Smallest execution time occurs generally when workload is distributed equally amongst cores/processors
+
+Speedup and Efficiency is used to quantitatively measure the parallel execution time
+
+\subsubsection{Load Balancing}
+
+When the workload of a program is distributed equally amongst the machine's cores or processors
+
+\subsubsection{Idle Times}
+
+The time a processor cannot do anything useful but wait for more work
+
+\subsubsection{Barrier Operations}
+
+Barrier points where both distributed and shared memory machines have to wait for all cores to synchronize
+
+\subsubsection{Memory}
+
+Memory distribution methods per multi-core systems
+
+Can use bits of both
+
+\subsubsection{Shared Memory}
+
+Memory organization where the machine shares memory for all threads
+
+Synchronization plays a heavy role, for example by keeping threads from reading files before another has written to them
+
+Often connected to the term "Thread"
+
+\subsubsection{Distributed Memory}
+
+Memory organization where the machine distributes memory per processor
+
+Communication happens explicitly via communication operations
+
+Often connected to the term "Process"
+
+\subsubsection{Core}
+
+Refers to single computing units
+
+\subsubsection{Multicore}
+
+Refers to entire processor having several cores
+
+\subsubsection{Tasks}
+
+Bits of instructions broken down into something more that can be managed on multiple cores
+
+Are assigned to processes or threads which are then assigned to physical computation units for execution
+
+\subsubsection{Synchronization}
+
+Synchronization and coordination of threads and processes in order to execute them correctly
+
+Strongly connected with the way in which information is exchanged between processes or threads
+
+Hardware dependant as well
+
+\subsubsection{Scheduling}
+
+The process of assigning tasks to processes or threads
+
+Fixes the order in which the tasks are executed
+
+Can be done by hand in the source code or by the programming environment, at compile time or dynamically at runtime
+
+\subsubsection{Mapping}
+
+The assignment of processes or threads onto the physical units, processors or cores
+
+Usually done by the runtime system but can sometimes be influenced by the programmer
+
+\subsubsection{Decomposition}
+
+Decomposing computations down into several tasks for multiple cores to process in parallel
+
+There are many different types of decomposition
+
+\subsubsection{Granularity}
+
+The size of tasks in terms of the number of instructions
+
+\subsubsection{Potential Parallelism}
+
+An inherited property of an application algorithm
+
+Influences how an application can be split into tasks
+
+\subsubsection{ILP}
+
+Instruction Level Parallelism (ILP)
+
+Processors which use pipelining to execute instructions are ILP processors
+
+\subsubsection{Throughput}
+
+The number of instructions finished per unit time of a pipeline
+
+In the absence of dependencies, the throughput is one instruction per clock cycle and the pipelines all work in parallel
+
+The absence of dependencies of pipelines determine the degree of parallelism attainable
+
+\subsubsection{Superpipelined}
+
+Processors with a relatively large number of pipeline stages
+
+\subsubsection{ALU}
+
+Arithmetic Logical Unit
+
+\subsubsection{FPU}
+
+Floating Point Unit 
+
+\subsubsection{Flynn's Taxonomy of Parallel Architectures}
+
+\subsubsection{SIMD}
+
+Single Instruction Multiple Data
+
+\subsubsection{MIMD}
+
+Multiple Instruction Multiple Data
+
+\subsubsection{Superscalar Processors}
+
+Superscalar processors have their parallel dependencies determined dynamically at runtime by hardware
+
+Decoded instructions are dispatched to the instruction units by hardware using dynamic Scheduling
+
+Makes the circut complexity increase significantly
+
+Simulations show that superscalar processors with up to four functional units yield substantial benefits over the single
+
+\subsubsection{VLIW Processors}
+
+Very Long Instruction Word (VLIW)
+
+\subsubsection{Computing Systems}
+
+Comprises all the hardware and software components which are provided to the programmer
+
+Forms the programmer's view of the machine
+
+\subsubsection{Software Aspects}
+
+Operating System
+
+Programming Language
+
+Compiler or Runtime Libraries
+
+\subsubsection{Hardware Aspects}
+
+Processor Architecture
+
+\subsubsection{Four Parallel Processing Models}
+
+\subsubsection{Machine Model}
+
+Lowest level of abstraction
+
+Describes the hardware and operating system
+
+\subsubsection{Architectural Model}
+
+Interconnection network of parallel platforms
+
+Memory organization
+
+Synchronous or Asynchronous processing
+
+Execution mode of single instructions by SIMD or MIMD
+
+\subsubsection{Computational Model}
+
+\subsubsection{Programming Model}
+
 \subsubsection{Threading}
 
 Threading and multi-core utilization 

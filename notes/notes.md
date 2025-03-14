@@ -1,242 +1,172 @@
-# General
+# Multi-Core Programming Notes
 
-DBLP - god resource for datalogi artikler
-
-Parallel programming: for multicore clusters
-Computer Architecture
-Structured COmputer ORganization
-
-# Keywords
-
+## 1. Core Concepts
+### 1.1 Key Terms
 - Parallelism
-    - Running multiple tasks across multiple cores/threads
-    - Single task single core
+  - Running multiple tasks across multiple cores/threads
+  - Single task single core
 - Concurrency
-    - Running multiple tasks simultaneously on one core
-- Asynchronous 
-    - Events that occur independently of the main program
-    - How to deal with said events
-    - Unordered
-    - A thread that can be suspended to save processing
-- Synchronous
-    - Events that occur linearly and order in tune with the flow of the main program
-    - Ordered
-- Subroutine
-    - Broadly speaking, functions
-    - Defined by having a set of instructions that are callable from memory
-    - Either internal or external
-        - Declared inside the code or fetched from another piece
-- Coroutine
-    - A function that is allowed to be suspended and continued at will
-    - Premise for running tasks across multiple cores or threads
-- Threads
-    - A list of tasks or instructions for a computer to execute
-    - There can be many so the computer knows to switch when awaiting changes
+  - Running multiple tasks simultaneously on one core
+- Asynchronous & Synchronous Processing
+  - Asynchronous: Independent events, unordered, suspendable
+  - Synchronous: Linear events, ordered, barrier operations
+
+### 1.2 Memory Architecture
+- Shared Memory
+  - Thread-based, shared access, needs synchronization
+- Distributed Memory
+  - Process-based, explicit communication
+- Hybrid Approaches
+
+## 2. Hardware Architecture
+### 2.1 CPU Components
+- Cores & Multi-core Systems
+- ALU (Arithmetic Logical Unit)
+- FPU (Floating Point Unit)
+
+### 2.2 Pipelining
+- Stages: Fetch, Decode, Execute, Write
+- Superpipelined Systems
+- Challenges
+  - Data dependencies
+  - Branch prediction
+  - Stage timing optimization
+
+### 2.3 Clock & Timing
+- Clock Frequency
+- Clock Cycle Time (T = 1/F)
+- Parallel Execution Considerations
+
+## 3. Parallel Processing Models
+### 3.1 Flynn's Taxonomy
+- SIMD (Single Instruction Multiple Data)
+- MIMD (Multiple Instruction Multiple Data)
+
+### 3.2 Processor Types
+- Superscalar Processors
+- VLIW Processors
+
+### 3.3 Processing Models
+- Machine Model
+- Architectural Model
+- Computational Model
+- Programming Model
+
+## 4. Implementation Concepts
+### 4.1 Task Management
+- Scheduling
+- Mapping
 - Load Balancing
-    - The art of distributing network traffic equally across a pool of resources (i.e. cores)
-- Context Switching
+- Granularity
+- Decomposition
 
-# Supervisor Questions
+### 4.2 Performance Considerations
+- ILP (Instruction Level Parallelism)
+- Throughput
+- Idle Times
+- Barrier Operations
 
-- How much should i expect the reader to know?
-- How should i structure the report
+## 5. Research & References
+### 5.1 Quotes
+"The technological development toward multicore processors..."
 
-# Status
+### 5.2 Resources
+- DBLP for computer science articles
+- Parallel Programming for Multicore Clusters
+- Computer Architecture texts
+- Structured Computer ORganization
 
-- Began reading, noting lots of keywords and looking them up
-- Starting to setup C programming environment and looking into pthreads
-- Python doesn't use multiple cores by default, can use them with the multiprocessing library
+## 6. Project Status
+- Current progress
+- Next steps
+- Questions for supervisor
 
-# Quotes
+## 7. CPU Architecture
 
-"The technological development toward multicore processors was forced by physical reasons, since the clock speed of chips with more and more transistors cannot be increased at the previous rate without overheating." - Parallel Programming for Multicore and Cluster Systems (P.3)
+### 7.1 ISA
 
-# Parallel Programming for Multicore and Cluster Systems
+- Instruction Set Architecture
+- ARM
+- X86
 
-- Read chapter 2 & 3
-- Chapter 2 is theory
-- Chapter 3 is for coding
+### 7.2 Caching
 
-### Instruction Pipeline
+- Local cpu memory
+- requests memory from the memory subsystem when needed
+- memory is fetched in batches
+  - used to avoid idle times
 
-- The execution of each instruction is partitioned into several steps that are performed by dedicated hardware units one after another
-  - These hardware units are also called pipeline stages
-- Overlaps multiple instructions
-- Is similar to an assembly line
-- Typical numbers of pipeline stages lie inbetween 2 and 26 stages
+### 7.3 Micro Architecture
 
-### Clock Frequency
+- Contains a set of stages
+  - Fetch
+  - Decode
+  - Execute
+    - such as addition, subtraction or comparisons
+  - Write Back
+    - Stores the execution either locally in a register or in global memory
 
-- The number of clock cycles per second
-- Also called clock speed
-- Meazured in hertz which is 1/second
-  - abbreviated as Hz
+### 7.4 Speculative Design
 
-### Clock Cycle Time
+- CPU Fetch and Decode uses a prediction algorithm to optimize code execution to make it optimal
 
-- The clock frequency F determines the clock cycle time T of the processor
-- Formula: T = 1/F
-- Usually the time needed for the execution of one instruction
+### 7.5 uOPS
 
-### Parallel execution time
+- Micro Operations
+- Strongest connection between the micro operations and the ISA
 
-- Consists of the time it takes for all cores or processors to finish a given program
-- Also the time for data exchange or synchronization
-- Should be smaller than the time for a synchronized single core process to be worth it
-- Influenced by idle times
-- Smallest execution time occurs generally when workload is distributed equally amongst cores/processors
-- Speedup and Efficiency is used to quantitatively measure the parallel execution time
+### 7.6 Instructions
 
-### Load Balancing
+- Instructions consist of a variety of elements
+  - Prefix
+  - OpCode
+    - Operations code simplified to let the cpu operate on them
+  - ModR/M
+    - Specifies 0,1 or 2 operands for an instructions
+  - SIB
+    - Identifies an address in the registry if present, followed by the MODR/M
+  - Displacement
+    - Identifies a target
+  - Immediate
+    - Identifies a target memory location
 
-- When the workload of a program is distributed equally amongst the machine's cores or processors
+### 7.7 Superscalar Execution
 
-### Idle Times
+- Called Superscalar Execution when they can operate in parallel
+- The number of executions a Microprocessor can execute is one way to measure the width of it
+- All modern Microprocessors are superscalar
+- The front-end of a microprocessor is important because it is needed to feed the back-end quickly enough for it to be efficient
 
-- The time a processor cannot do anything useful but wait for more work
+#### 7.7.1 ALU
 
-### Barrier Operations
+- Arithmetic Logic Unit
+- Simplest form of operation
+- Can perform adds or subtractions
 
-- Barrier points where both distributed and shared memory machines have to wait for all cores to synchronize
+#### 7.7.2 FPU
 
-### Memory
+- Floating Point Unit
 
-- Memory distribution methods per multi-core systems
-- Can use bits of both
+### 7.8 Order Execution
 
-#### Shared Memory
+#### 7.8.1 Ordered Execution
 
-- Memory organization where the machine shares memory for all threads
-- Synchronization plays a heavy role, for example by keeping threads from reading files before another has written to them
-- Often connected to the term "Thread"
+- Synchronous execution, waiting on one task to finish before executing the next
 
-#### Distributed Memory
+#### 7.8.2 Unordered Execution
 
-- Memory organization where the machine distributes memory per processor
-- Communication happens explicitly via communication operations
-- Often connected to the term "Process"
+- Asynchronous execution, competing tasks in parallel disregarding order
 
-### Core
+### 7.9 CPU Backend
 
-- Refers to single computing units
+#### 7.9.1 Unordered Backend
 
-### Multicore
+- Takes the instructions as they get decoded into uOPS and determines their dependencies on other executions
+  - uOPS are dependant when they need another uOPS' output to continue
+  - Is tracked by a process called "Register Renaming"
 
-- Refers to entire processor having several cores
+## 8. GPU Architecture
 
-### Tasks
+### 8.1 Embarassingly Parallel Operations
 
-- Bits of instructions broken down into something more that can be managed on multiple cores
-- Are assigned to processes or threads which are then assigned to physical computation units for execution
-
-### Synchronization
-
-- Synchronization and coordination of threads and processes in order to execute them correctly
-- Strongly connected with the way in which information is exchanged between processes or threads
-  - Hardware dependant as well
-
-### Scheduling
-
-- The process of assigning tasks to processes or threads
-- Fixes the order in which the tasks are executed
-- Can be done by hand in the source code or by the programming environment, at compile time or dynamically at runtime
-
-### Mapping
-
-- The assignment of processes or threads onto the physical units, processors or cores
-- Usually done by the runtime system but can sometimes be influenced by the programmer
-
-### Decomposition
-
-- Decomposing computations down into several tasks for multiple cores to process in parallel
-- There are many different types of decomposition
-
-### Granularity
-
-- The size of tasks in terms of the number of instructions
-
-### Potential Parallelism
-
-- An inherited property of an application algorithm
-- Influences how an application can be split into tasks
-
-### ILP
-
-- Instruction Level Parallelism (ILP)
-- Processors which use pipelining to execute instructions are ILP processors
-
-### Throughput
-
-- The number of instructions finished per unit time of a pipeline
-- In the absence of dependencies, the throughput is one instruction per clock cycle and the pipelines all work in parallel
-- The absence of dependencies of pipelines determine the degree of parallelism attainable
-
-### Superpipelined
-
-- Processors with a relatively large number of pipeline stages
-
-### ALU
-
-- Arithmetic Logical Unit
-
-### FPU
-
-- Floating Point Unit 
-
-## Flynn's Taxonomy of Parallel Architectures
-
-### SIMD
-
-- Single Instruction Multiple Data
-
-### MIMD
-
-- Multiple Instruction Multiple Data
-
-### Superscalar Processors
-
-- Superscalar processors have their parallel dependencies determined dynamically at runtime by hardware
-- Decoded instructions are dispatched to the instruction units by hardware using dynamic Scheduling
-- Makes the circut complexity increase significantly
-- Simulations show that superscalar processors with up to four functional units yield substantial benefits over the single
-
-### VLIW Processors
-
-- Very Long Instruction Word (VLIW)
-
-### 
-
-### Computing Systems
-
-- Comprises all the hardware and software components which are provided to the programmer
-  - Forms the programmer's view of the machine
-
-#### Software Aspects
-
-- Operating System
-- Programming Language
-- Compiler or Runtime Libraries
-
-#### Hardware Aspects
-
-- Processor Architecture
-
-### Four Parallel Processing Models
-
-#### Machine Model
-
-- Lowest level of abstraction
-- Describes the hardware and operating system
-
-#### Architectural Model
-
-- Interconnection network of parallel platforms
-- Memory organization
-- Synchronous or Asynchronous processing
-- Execution mode of single instructions by SIMD or MIMD
-
-#### Computational Model
-
-- 
-
-#### Programming Model
+- Parallel operations are operations that are so easily split into multiple tasks it is almost embarassing

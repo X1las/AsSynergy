@@ -10,7 +10,7 @@
 \usepackage{parskip}
 \usepackage{xcolor}
 
-\title{Multi-core Synergy: A Study of performance improvements utilizing multi-core threading in python}
+\title{Multi-core Synergy: A Study of performance improvements utilizing multi-core threading}
 \author{J. Wolffrom}
 \date{\today}
 
@@ -29,18 +29,13 @@
 \newpage
 \section{Introduction}
 
-According to Moore's Law, the number of transistors on a microchip doubles every two years, leading to an exponential increase in computing power. 
-However, this trend has slowed down in recent years, as the physical limitations of silicon-based technology have been reached \parencite{Mattson2014}.
+According to Moore's Law, the number of transistors on a microchip doubles every two years, leading to an exponential increase in computing power. However, this trend has slowed down in recent years, as we are approaching the limitations of silicon based technology \parencite{Mattson2014}.
 
 \begin{quote}
-    \textit{\textcolor{darkgray}{Increased clock speeds meant higher heat generation and power consumption, 
-    necessitating more robust cooling solutions and improved power management techniques. 
-    The quest for ever-higher clock speeds eventually reached a plateau due to these limitations, leading to a shift in CPU design principles.}} 
-    - \parencite{mscodes} 
+    \textit{\textcolor{darkgray}{Increased clock speeds meant higher heat generation and power consumption, necessitating more robust cooling solutions and improved power management techniques. The quest for ever-higher clock speeds eventually reached a plateau due to these limitations, leading to a shift in CPU design principles.}} - \parencite{mscodes} 
 \end{quote}
 
-As a result, the focus has shifted from increasing clock speeds to adding more cores to a processor. This has led to the rise of multi-core processors, which contain multiple processing units on a single chip. 
-These processors can execute multiple orders simultaneiously, which can lead to significant performance improvements in software applications, however, a discrepancy can be found in the communities that rely on performance improvements.
+As a result of the processing speed ceiling, the focus has shifted from increasing the clock speed of CPUs to adding more computational units to them. This has led to the rise of multi-core processors, which contain multiple processing units on a single chip, often referred to as "cores". These cores can execute multiple orders simultaneiously, which can lead to significant performance improvements in software applications. However, a discrepancy can be found in the communities that rely on these improvements.
 
 \begin{quote}
     \textit{\textcolor{darkgray}{While there are some PC games that love CPUs with a dozen or more cores, they’re few and far between. 
@@ -48,32 +43,30 @@ These processors can execute multiple orders simultaneiously, which can lead to 
     - \parencite{Thomas2025}
 \end{quote}
 
-Within the gaming communities we're seeing a trend of diminishing returns, whereas what we should be seeing is an equivalance. There is a concensus that multi-core threading is the future of software development, and it has been for several years now, even as far back as 2005 \parencite{mscodes}.
+Within the gaming communities we're seeing a trend of diminishing returns, whereas what we should be seeing is an equivalance. There is a concensus that multi-core threading is the future of software development, and it has been for several years now, even as far back as 2005 \parencite{mscodes}, so the question is what's holding us back?
 
 \subsection{The Problem Area}
 
-The question then remains, why are we not seeing the performance improvements that we should be seeing?
+If multi-core threading is the future, then it is essential to understand why it is not delivering the expected performance improvements it has the potential to deliver. \parencite[p. 12]{Rauber2023} mentions that simulations have shown that superscalar processors with up to four functional units yield substantial benefits over the use of a single functional unit. So in theory, it would seem there is a great potential to gain from utilizing multiple cores. Some of it has been utilized according to \textcite{Thomas2025}, as we are talking about 8-cores as opposed to one, but it has taken us well over 20 years to get to this point.
 
-If multi-core threading is the future, then it is essential to understand why it is not delivering the expected performance improvements it has the potential to deliver. 
-As such, this study aims to address this question by investigating the challenges of multi-core threading and identifying potential solutions to improve performance.
+As such, this study aims to address this question of why multi-code optimization is so difficult to accomplish, if and/or how it can be improved, and what the potential benefits of doing so are. In addition, we wish to bring to light the concept of multi-core threading or processing as a whole, seeing as it has slipped out of the public's eye in recent years. Now, more than ever, with the rise of machine learning and AI, we need to be able to utilize the full potential of our hardware.
 
 \subsubsection{Research Question}
 
-This being said, there are limits to what can be achieved by the short span of this study, and as such we will be focusing on implementing a solution in python, 
-as it is a language that is widely used and has a large community of developers.
+This being said, there are limits to what can be achieved in such a short study, therefore we will be focusing heavily on the theory behind multi-core computing and how to get startet with it. 
 
 The research question that we will be addressing is then as follows:
 
 \begin{quote}
-    \textit{How can we improve the performance of software applications by utilizing multi-core threading in Python?}
+    \textit{What are the challenges of multi-core optimization, and how can they be overcome?}
 \end{quote}
 
 This question can then be further broken down into the following sub-questions:
 
 \begin{itemize}
-    \item What is the basic makeup of a cpu?
-    \item What is a thread, and how can it be accessed in python?
-    \item What frameworks are commonly used for multi-core threading, and how can they be extended to use in python?
+    \item What does the standard architecture of a CPU look like? Is there one?
+    \item What is a thread, and what is a processor?
+    \item What frameworks are commonly used for multi-core threading?
     \item What are the challenges of multi-core threading, and how can they be overcome?
 \end{itemize}
 

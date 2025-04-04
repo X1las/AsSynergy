@@ -8,7 +8,7 @@ def count_to_high_number(start, end, q):
     q.put(count)
 
 if __name__ == '__main__':
-    high_number = 10000000
+    high_number = 1000000000
     num_cores = mp.cpu_count()
     chunk_size = high_number // num_cores
 

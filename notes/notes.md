@@ -37,6 +37,11 @@
 - Clock Cycle Time (T = 1/F)
 - Parallel Execution Considerations
 
+### 2.4 Instruction Pipeline
+- Execution of each instruction is partitioned into several steps performed by dedicated hardware units (pipeline stages).
+- Overlaps multiple instructions, similar to an assembly line.
+- Typical pipeline stages range between 2 and 26.
+
 ## 3. Parallel Processing Models
 ### 3.1 Flynn's Taxonomy
 - SIMD (Single Instruction Multiple Data)
@@ -44,27 +49,41 @@
 
 ### 3.2 Processor Types
 - Superscalar Processors
-- VLIW Processors
+  - Parallel dependencies determined dynamically at runtime by hardware.
+  - Decoded instructions dispatched to instruction units using dynamic scheduling.
+  - Benefits diminish beyond four functional units.
+- VLIW Processors (Very Long Instruction Word)
 
 ### 3.3 Processing Models
 - Machine Model
+  - Lowest level of abstraction, describes hardware and OS.
 - Architectural Model
+  - Interconnection network, memory organization, synchronous/asynchronous processing.
 - Computational Model
 - Programming Model
 
 ## 4. Implementation Concepts
 ### 4.1 Task Management
 - Scheduling
+  - Assigning tasks to processes or threads, fixing execution order.
 - Mapping
+  - Assigning processes/threads to physical units (cores/processors).
 - Load Balancing
+  - Distributing workload equally among cores/processors.
 - Granularity
+  - Size of tasks in terms of instructions.
 - Decomposition
+  - Breaking computations into tasks for parallel processing.
 
 ### 4.2 Performance Considerations
 - ILP (Instruction Level Parallelism)
+  - Processors using pipelining to execute instructions.
 - Throughput
+  - Number of instructions finished per unit time in a pipeline.
 - Idle Times
+  - Time a processor waits for more work.
 - Barrier Operations
+  - Synchronization points where all cores must wait.
 
 ## 5. Research & References
 ### 5.1 Quotes
@@ -91,10 +110,10 @@
 
 ### 7.2 Caching
 
-- Local cpu memory
-- requests memory from the memory subsystem when needed
-- memory is fetched in batches
-  - used to avoid idle times
+- Local CPU memory
+- Requests memory from the memory subsystem when needed
+- Memory is fetched in batches
+  - Used to avoid idle times
 
 ### 7.3 Micro Architecture
 
@@ -102,7 +121,7 @@
   - Fetch
   - Decode
   - Execute
-    - such as addition, subtraction or comparisons
+    - Such as addition, subtraction, or comparisons
   - Write Back
     - Stores the execution either locally in a register or in global memory
 
@@ -120,9 +139,9 @@
 - Instructions consist of a variety of elements
   - Prefix
   - OpCode
-    - Operations code simplified to let the cpu operate on them
+    - Operations code simplified to let the CPU operate on them
   - ModR/M
-    - Specifies 0,1 or 2 operands for an instructions
+    - Specifies 0, 1, or 2 operands for an instruction
   - SIB
     - Identifies an address in the registry if present, followed by the MODR/M
   - Displacement
@@ -162,11 +181,11 @@
 #### 7.9.1 Unordered Backend
 
 - Takes the instructions as they get decoded into uOPS and determines their dependencies on other executions
-  - uOPS are dependant when they need another uOPS' output to continue
+  - uOPS are dependent when they need another uOPS' output to continue
   - Is tracked by a process called "Register Renaming"
 
 ## 8. GPU Architecture
 
-### 8.1 Embarassingly Parallel Operations
+### 8.1 Embarrassingly Parallel Operations
 
-- Parallel operations are operations that are so easily split into multiple tasks it is almost embarassing
+- Parallel operations are operations that are so easily split into multiple tasks it is almost embarrassing

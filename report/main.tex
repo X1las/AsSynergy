@@ -10,11 +10,11 @@
 \usepackage{parskip}
 \usepackage{xcolor}
 
-\title{Multi-core Synergy: A Study of performance improvements utilizing multi-core threading}
+\title{Multi-core Synergy: A Study of Performance Improvements Utilizing Multi-core Threading}
 \author{J. Wolffrom}
 \date{\today}
 
-\begin{document} 
+\begin{document}
 
 \maketitle
 \newpage
@@ -25,8 +25,8 @@
 \newpage
 
 \tableofcontents
-
 \newpage
+
 \section{Introduction}
 
 According to Moore's Law, the number of transistors on a microchip doubles every two years, leading to an exponential increase in computing power. However, this trend has slowed down in recent years, as we are approaching the limitations of silicon based technology \parencite{Mattson2014}.
@@ -72,42 +72,30 @@ This question can then be further broken down into the following sub-questions:
 
 These questions serve as a guide for the study and will help to structure the research process, beginning with a review of the literature on the topic.
 
-\section{Methodology}
+\section{Limitations}
 
-Overall introduction to the methodology, and how it will be structured.
+This study is limited in scope to just a handful of programming languages, and even in that case we will just be delving into the details of Python. This is due to the fact that Python isn't necessarily the best language in terms of performance, but is one of the slowest in terms of execution time. This makes python an exceptional candidate for multi-core threading, as it stands to gain the most from it.
 
-\subsection{CPU Architecture}
+As such, the primary focus will be the theory behind multi-core processing in python with a few examples of how to implement it. We will be looking at how languages such as C, Java, and C\# handle multi-core processing, but we will not be going into detail on how to implement it in those languages. The focus will be strictly on comparisons for the sake of understanding key concepts like parallelism and concurrency.
 
-The difference between performance cores and "optional" cores
+In addition to the limits of programming languages, we will also be limiting the range of operating systems to just Windows and Linux. This is due to the fact that these share the same range of common chipsets as opposed to MacOS, which keeps to a very small range of chipsets. This is not to say that MacOS is not capable of multi-core processing, but rather that most of the practical applications of multi-core processing are applied to Windows and Linux systems.
 
-\subsubsection{Instruction Pipeline}
-The execution of each instruction is partitioned into several steps that are performed by dedicated hardware units one after another.
+\section{Threads and Processors}
+\subsection{Synchrony and Asynchrony}
 
-These hardware units are also called pipeline stages.
+Presentation on the two paradigms, and how they both are used in multi-core threading.
 
-Overlaps multiple instructions.
+\subsubsection{Subroutines and Coroutines}
 
-Is similar to an assembly line.
+Small introduction to Subroutines and Coroutines as methods, and linking them directly to "def" in python.
 
-Typical numbers of pipeline stages lie in between 2 and 26 stages.
+\subsubsection{Suspension}
 
-\subsubsection{Clock Frequency}
+Include something about time.sleep in python, it suspends a thread just like async.
 
-The number of clock cycles per second.
-
-Also called clock speed.
-
-Measured in hertz which is 1/second (abbreviated as Hz).
-
-\subsubsection{Clock Cycle Time}
-
-The clock frequency \( F \) determines the clock cycle time \( T \) of the processor.
-
-Formula: \( T = 1/F \).
-
-Usually the time needed for the execution of one instruction.
-
-\subsubsection{Parallel Execution Time}
+\section{Parallelism}
+\subsection{Degree of Parallelism}
+\subsubsection{Parallel Execution Time (PET)}
 
 Consists of the time it takes for all cores or processors to finish a given program.
 
@@ -125,21 +113,12 @@ Speedup and efficiency are used to quantitatively measure the parallel execution
 
 When the workload of a program is distributed equally amongst the machine's cores or processors.
 
-\subsubsection{Idle Times}
+\subsubsection{Idle Time}
 
 The time a processor cannot do anything useful but wait for more work.
 
-\subsubsection{Barrier Operations}
-
-Barrier points where both distributed and shared memory machines have to wait for all cores to synchronize.
-
-\subsubsection{Memory}
-
-Memory distribution methods per multi-core systems.
-
-Can use bits of both.
-
-\subsubsection{Shared Memory}
+\section{Memory}
+\subsection{Shared Memory}
 
 Memory organization where the machine shares memory for all threads.
 
@@ -147,177 +126,36 @@ Synchronization plays a heavy role, for example by keeping threads from reading 
 
 Often connected to the term "Thread".
 
-\subsubsection{Distributed Memory}
+\subsection{Memory Access Time (MAT)}
 
-Memory organization where the machine distributes memory per processor.
+Add content if applicable.
 
-Communication happens explicitly via communication operations.
+\section{Schedulers}
 
-Often connected to the term "Process".
+Add content if applicable.
 
-\subsubsection{Core}
+\section{TRIN Model}
 
-Refers to single computing units.
+Add content if applicable.
 
-\subsubsection{Multicore}
-
-Refers to an entire processor having several cores.
-
-\subsubsection{Tasks}
-
-Bits of instructions broken down into something more that can be managed on multiple cores.
-
-Are assigned to processes or threads which are then assigned to physical computation units for execution.
-
-\subsubsection{Synchronization}
-
-Synchronization and coordination of threads and processes in order to execute them correctly.
-
-Strongly connected with the way in which information is exchanged between processes or threads.
-
-Hardware dependent as well.
-
-\subsubsection{Scheduling}
-
-The process of assigning tasks to processes or threads.
-
-Fixes the order in which the tasks are executed.
-
-Can be done by hand in the source code or by the programming environment, at compile time or dynamically at runtime.
-
-\subsubsection{Mapping}
-
-The assignment of processes or threads onto the physical units, processors, or cores.
-
-Usually done by the runtime system but can sometimes be influenced by the programmer.
-
-\subsubsection{Decomposition}
-
-Decomposing computations down into several tasks for multiple cores to process in parallel.
-
-There are many different types of decomposition.
-
-\subsubsection{Granularity}
-
-The size of tasks in terms of the number of instructions.
-
-\subsubsection{Potential Parallelism}
-
-An inherited property of an application algorithm.
-
-Influences how an application can be split into tasks.
-
-\subsubsection{ILP}
-
-Instruction Level Parallelism (ILP).
-
-Processors which use pipelining to execute instructions are ILP processors.
-
-\subsubsection{Throughput}
-
-The number of instructions finished per unit time of a pipeline.
-
-In the absence of dependencies, the throughput is one instruction per clock cycle and the pipelines all work in parallel.
-
-The absence of dependencies of pipelines determines the degree of parallelism attainable.
-
-\subsubsection{Superpipelined}
-
-Processors with a relatively large number of pipeline stages.
-
-\subsubsection{ALU}
-
-Arithmetic Logical Unit.
-
-\subsubsection{FPU}
-
-Floating Point Unit.
-
-\subsubsection{Flynn's Taxonomy of Parallel Architectures}
-
-\subsubsection{SIMD}
-
-Single Instruction Multiple Data.
-
-\subsubsection{MIMD}
-
-Multiple Instruction Multiple Data.
-
-\subsubsection{Superscalar Processors}
-
-Superscalar processors have their parallel dependencies determined dynamically at runtime by hardware.
-
-Decoded instructions are dispatched to the instruction units by hardware using dynamic scheduling.
-
-Makes the circuit complexity increase significantly.
-
-Simulations show that superscalar processors with up to four functional units yield substantial benefits over the single.
-
-\subsubsection{VLIW Processors}
-
-Very Long Instruction Word (VLIW).
-
-\subsubsection{Computing Systems}
-
-Comprises all the hardware and software components which are provided to the programmer.
-
-Forms the programmer's view of the machine.
-
-\subsubsection{Software Aspects}
-
-Operating System.
-
-Programming Language.
-
-Compiler or Runtime Libraries.
-
-\subsubsection{Hardware Aspects}
-
-Processor Architecture.
-
-\subsubsection{Four Parallel Processing Models}
-
-\subsubsection{Machine Model}
-
-Lowest level of abstraction.
-
-Describes the hardware and operating system.
-
-\subsubsection{Architectural Model}
-
-Interconnection network of parallel platforms.
-
-Memory organization.
-
-Synchronous or Asynchronous processing.
-
-Execution mode of single instructions by SIMD or MIMD.
-
-\subsubsection{Computational Model}
-
-\subsubsection{Programming Model}
-
-\subsubsection{Threading}
-
-Threading and multi-core utilization.
-
+\section{State of the Field}
 \subsection{Python}
 
-If there turns out to be something that limits the performance of python in multi-core threading this might be useful to talk about.
+As it stands, Python is one of the most popular programming languages in the field of computer science. It is widely used in a variety of applications due to its simplicity and ease of use. However, it is an interpreted language, which means that it is not as fast as compiled languages like C or C++. In fact it is written in C, which is a compiled language. This means that in places it keeps the speed of C by pre-compiling certain commands, but in other places it is slower than C, with up to 10 times the execution in difference.
 
-\subsection{Concurrency and Parallelism}
+This is important due to the way Python handles multi-core threading. By default, Python comes pre-installed with threading and asynchronous libraries, which allow for the use of multiple threads in a program, however the presence of the Global Interpreter Lock (GIL) means that only one core will be in use at any time. This means that the performance improvements of multi-core threading are not easily accessed, but by using libraries such as multiprocessing, we can bypass the GIL using some C utilities. This allows us to use multiple cores in a program, but it is not as easy to implement as it is in other languages.
 
-Presentation on the two paradigms, and how they both are used in multi-core threading.
+\subsection{Java}
 
-\subsubsection{Asynchronous Programming}
+Java comes with a built-in threading library, which allows for the use of multiple threads in a program, managed by the Java Virtual Machine (JVM). Usually this is accomplished by inheritance, designating a class as a thread, allowing it to use common threading methods such as sleep (suspension) and join (synchronization). This means that Java is able to utilize multiple cores in a program by use of their own scheduler, and the performance improvements are easily accessible. However, this is not without its drawbacks, as the JVM is an interpreted language, which means that it is not as fast as compiled languages like C or C++. In addition, the JVM is not as efficient as other languages when it comes to memory management, which can lead to performance issues in large programs. 
 
-Short subsection on async, and how it uses a single thread to run multiple tasks using methods to suspend itself whilst awaiting changes.
+\subsection{C\#}
 
-\subsubsection{Subroutines and Coroutines}
+Include thoughts about other programming languages.
 
-Small introduction to Subroutines and Coroutines as methods, and liking them directly to "def" in python.
+\subsection{C}
 
-Inclue something about time.sleep in python, it syspends a thread just like async.
+Include thoughts about other programming languages.
 
 \section{Data Collection}
 
@@ -327,15 +165,19 @@ Potentially rename the section to something more fitting.
 
 \section{Results}
 
-
+Add content if applicable.
 
 \section{Discussion}
 
 Include thoughts about other programming languages.
 
 \section{Conclusion}
+
+Add content if applicable.
+
 \newpage
 \section{References}
 \printbibliography
+% Ensure Biber is run to resolve undefined references
 
 \end{document}

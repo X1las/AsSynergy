@@ -80,6 +80,12 @@ As such, the primary focus will be the theory behind multi-core processing in py
 
 In addition to the limits of programming languages, we will also be limiting the range of operating systems to just Windows and Linux. This is due to the fact that these share the same range of common chipsets as opposed to MacOS, which keeps to a very small range of chipsets. This is not to say that MacOS is not capable of multi-core processing, but rather that most of the practical applications of multi-core processing are applied to Windows and Linux systems.
 
+\section{Terminology}
+
+For the purpose of this paper, we will be using a lot of terminology that refers to the different sub-components of a computer. We expect the reader to have a basic understanding of what a computer is, and a general overview of its components, such as knowing what a CPU is and what role it plays. 
+
+The term \textbf{core} refers to a single processing unit that is housen within a CPU, which will occur frequently in this paper. The term \textbf{thread} and \textbf{process} are often used interchangeably when going over the CPU architecture, but threads are generally smaller and are often used to refer to single tasks of which a process could contain many. This is not to be confused with a \textbf{processor} which is a kind of processing unit that is smaller in size than a core, and is often used to refer to the physical chip that is used to execute the orders.
+
 \section{Synchronous and Asynchronous systems}
 
 When looking at computing with multi-core systems it is important to understand the difference between a synchronous and asynchronous system. In general, when we talk about systems that use a single processing unit we usually always talk of a synchronous system, as orders are executed in order. When we scale this order up to several processing units on the same chipset we have what is referred to as a multicore processor, which is the focal point of this study. This multicore processor can then either be synchronous in order to keep to the order of executions that computers are used to, or we can choose to make it asynchronous, allowing all processing units to execute somewhat independently of each other. 

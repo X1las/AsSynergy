@@ -92,17 +92,38 @@ When looking at computing with multi-core systems it is important to understand 
 
 The reality of synchronous and asynchronous systems is that they are not entirely separate. They are often used in conjunction with each other, as we need levels of synchronization in order to access shared resources between different cores. Simple tasks such as reading and writing to memory is determined by whether another core is using that memory at the same time, further complicating the matter.
 
-\section{Threading}
-
-What this means, is that for any set of tasks given to a processing core, we need to be able to suspend their execution in order to allow other sets of tasks to be executed before them on Potentially different cores. This is where threads come into play, as the computer needs a way to keep track of what can be executed and when. Threads are a way of organizing tasks
-
 \subsubsection{Subroutines and Coroutines}
 
-Small introduction to Subroutines and Coroutines as methods, and linking them directly to "def" in python.
+In order to understand asynchronous systems, it's important to note both subroutines and coroutines. 
 
-\subsubsection{Suspension}
+Subroutines are the standard way of executing tasks in traditional programming, where the order of execution is determined by the order of which commands are written in the code. These are often known as Functions in programming languages, and are executed in a inear fashion, exiting once they finish executing. This makes then quite similar to coroutines, as they share the same functionality, except for the the ability to suspend their execution, also known by the 'yield' and 'resume' keywords. 
 
-Include something about time.sleep in python, it suspends a thread just like async.
+This means that coroutines can be used to execute tasks in a non-linear fashion, allowing for more flexibility in the order of executions. Whether or not we have a coroutine defined as the target to 'yield' to also determines whether we are working with synchronous or asynchronous systems. 'yield'ing to a coroutine means that we are working with dependencies, pausing the execution of a program to wait for a result from another coroutine. 
+
+For an example, look at the following python snippet:
+\begin{verbatim}
+
+import asyncio
+
+async def main():
+    print('Hello ...')
+    await asyncio.sleep(1)
+    print('... World!')
+
+asyncio.run(main())
+\end{verbatim}
+
+Which defines an asynchronous main function, or a coroutime that will print "Hello World" interspaced by one second. This shows the prominent 'yield' functionality. If we gave the function a target to yield to, we would in turn make the code synchronous in nature.
+
+\subsection{Threading}
+
+The reason why subroutines and coroutines are important to understand is because they relate quite heavily to threads. 
+
+Threading is a way of executing multiple different tasks at the same time in a computer operating system. Every program on a computer intrinsically define at least one thread of operations they want the operating system to execute. This is often referred to as the main thread, and is the thread that is executed first when a program is started, which can then spawn sub-threads to execute other tasks. The OS then handles what order threads are executed in using what is known as a "Scheduler", this scheduler is then also responsible for 'Suspending' threads to make it seem like all programs are executed concurrently. 
+
+This process of suspending threads is what allows for the illusion of concurrency, allowing the operating system to seemingly execute multiple threads at the same time by switching back and forth rapidly between tasks. This is known as "context switching", and is a key feature of modern operating systems, making even a single core processing system capable of multi-tasking.
+
+This is not to be confused with multi-core processing, which is the ability to execute multiple threads at the same time with different cores. This is where the real performance improvements come from, as we can execute multiple tasks at the same time without having to switch as often. This is known as "parallelism", and is a key feature of modern multi-core processors.
 
 \section{Parallelism}
 \subsection{Degree of Parallelism}
@@ -154,7 +175,7 @@ Add content if applicable.
 
 As it stands, Python is one of the most popular programming languages in the field of computer science. It is widely used in a variety of applications due to its simplicity and ease of use. However, it is an interpreted language, which means that it is not as fast as compiled languages like C or C++. In fact it is written in C, which is a compiled language. This means that in places it keeps the speed of C by pre-compiling certain commands, but in other places it is slower than C, with up to 10 times the execution in difference.
 
-This is important due to the way Python handles multi-core threading. By default, Python comes pre-installed with threading and asynchronous libraries, which allow for the use of multiple threads in a program, however the presence of the Global Interpreter Lock (GIL) means that only one core will be in use at any time. This means that the performance improvements of multi-core threading are not easily accessed, but by using libraries such as multiprocessing, we can bypass the GIL using some C utilities. This allows us to use multiple cores in a program, but it is not as easy to implement as it is in other languages.
+This is important due to the way Python handles multi-core threading. By default, Python comes pre-installed with threading and asynchronous libraries, which allow for the use of multiple threads in a program, however the presence of the Global Interpreter Lock (GIL) means that only one core will be in use at any time. This means that the performance improvements of multi-core threading are not easily accessed, but by using libraries such as 'multiprocessing' or 'numpy', we can bypass the GIL using some of the same utilities in C. This allows us to use multiple cores in a program, but it is not as easy to implement as it is in other languages.
 
 \subsection{Java}
 
@@ -162,11 +183,15 @@ Java comes with a built-in threading library, which allows for the use of multip
 
 \subsection{C\#}
 
-Include thoughts about other programming languages.
+C\# is a compiled language that is part of the C language family like Python, however where it differs is its striking resemblance to Java. It is a high-level language that is designed to be easy to use and understand, gathering a lot of attention due to its usage in the Unity game engine as well as developers transitioning from other languages. It is therefore a prime candidate for multi-core processing optimization as Java developers come potentially pre-equipped with a solid foundation of threading, as well as new game developers looking for performance improvements.
+
+The way C\# handles multi-core threading is not the same as Java, as it provides a library to assign tasks to threads, which in turn are managed by the operating system's scheduler. This means that C\# is able to utilize multiple cores in a program, but it is not as easy to implement as it is in Java. However, C\# does have some advantages over Java when it comes to performance, as it is a compiled language and therefore faster than Java. In addition, C\# has a more efficient memory management system than Java, which can lead to performance improvements in large programs.
 
 \subsection{C}
 
-Include thoughts about other programming languages.
+C, unlike the previous mentions, is a low-level programming language. It is a compiled language that is designed to be fast and efficient, making it a popular choice for system programming and embedded systems. C is often used in applications where performance is critical, such as operating systems, device drivers, and high-performance computing, as well as game engines. It is therefore a prime candidate for multi-core processing optimization, as wherever C is used in practice it is often done so with performance in mind.
+
+C provides a library for multi-core threading called Posix, labeling their way of threading as 'pthreads' or 'POSIX threads'. This library is a standard for multi-core threading in C, and comes pre-installed with unix systems such as Linux in the GCC compiler used for this study.
 
 \section{Data Collection}
 

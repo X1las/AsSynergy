@@ -17,3 +17,4 @@ report/*.run.xml
 *.ilk
 *.pdb
 *.idb
+.vscode

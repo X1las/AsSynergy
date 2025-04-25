@@ -117,33 +117,37 @@ Which defines an asynchronous main function, or a coroutime that will print "Hel
 
 \subsection{Threading}
 
-The reason why subroutines and coroutines are important to understand is because they relate quite heavily to threads. 
+The reason why subroutines and coroutines are important to understand is because they relate quite heavily to how threads operate. 
 
 Threading is a way of executing multiple different tasks at the same time in a computer operating system. Every program on a computer intrinsically define at least one thread of operations they want the operating system to execute. This is often referred to as the main thread, and is the thread that is executed first when a program is started, which can then spawn sub-threads to execute other tasks. The OS then handles what order threads are executed in using what is known as a "Scheduler", this scheduler is then also responsible for 'Suspending' threads to make it seem like all programs are executed concurrently. 
 
 This process of suspending threads is what allows for the illusion of concurrency, allowing the operating system to seemingly execute multiple threads at the same time by switching back and forth rapidly between tasks. This is known as "context switching", and is a key feature of modern operating systems, making even a single core processing system capable of multi-tasking.
 
-This is not to be confused with multi-core processing, which is the ability to execute multiple threads at the same time with different cores. This is where the real performance improvements come from, as we can execute multiple tasks at the same time without having to switch as often. This is known as "parallelism", and is a key feature of modern multi-core processors.
+This is not to be confused with multi-core processing, which is the ability to execute multiple threads at the same time with different cores. This is where the real performance improvements come from, as we can execute multiple tasks at the same time without having to switch as often.
 
 \section{Parallelism}
+This ability to execute multiple tasks simultaneously with multiple cores is known as "parallelism". In this section we will be looking at notable terms and concepts that are important to understand when working with multi-core systems.
 \subsection{Degree of Parallelism}
+
+In the field of parallel systems architecture we often talk about the degree of parallelism a system is capable of. This is a measure of how many tasks can be executed at the same time, and is often used to describe the performance improvements that a parallel system provides.
+
+This, in turn, coincides with the concept of "Potential Parallelism", which is the theoretical maximum degree of parallelism that a system can achieve. This is often used to describe the performance improvements that a parallel system can provide, and is often used as a benchmark for comparing different systems.
+
 \subsubsection{Parallel Execution Time (PET)}
 
-Consists of the time it takes for all cores or processors to finish a given program.
+In this context of degrees of parallelism, we often use measures such as "Parallel Execution Time" (PET) to quantitatively describe the time it takes for a parallel system to execute a given task. 
 
-Also the time for data exchange or synchronization.
+This execution time is measured across all functional units, or cores of a system, and can be used to give a tangible measure of the running time of a parallel program. This means that waiting times for memory fetching, writing and plain idle times are included in the measure.
 
-Should be smaller than the time for a synchronized single-core process to be worth it.
-
-Influenced by idle times.
-
-Smallest execution time occurs generally when workload is distributed equally amongst cores/processors.
-
-Speedup and efficiency are used to quantitatively measure the parallel execution time.
+In terms of coding with multi-core threading, this means that "scheduling" time is included in the measure as well, as this is the time it takes for the operating system to assign tasks to different cores. This is important to note, as it means that the performance improvements of a parallel system are not just determined by the number of cores, but also by the efficiency of the scheduling algorithm used by the operating system.
 
 \subsubsection{Load Balancing}
 
-When the workload of a program is distributed equally amongst the machine's cores or processors.
+The term "Load Balancing" refers to the standard process of distributing tasks across multiple cores in a parallel system, such that tasks are executed equally across all cores. This is important to ensure that all cores are utilized effectively, and that no single core is overloaded with tasks while others are idle.
+
+To this, it is important to note that not all cores are created equal, and that in terms of cpu-architecture we see a lot of variation with "Performance" and "Optional" cores. Performance cores are designed to handle heavy workloads, while optional cores are designed to handle lighter workloads. This means that load balancing is not just about distributing tasks evenly across all cores, but also about ensuring that the right tasks are assigned to the right cores. 
+
+Even within the same core type we can see a lot of variation in terms of performance, as some cores are designed to handle specific tasks better than others. This is known as "heterogeneous computing", and is an important consideration when designing parallel systems, but as mentioned earlier, in this paper we will only deal with intel x64 architecture.
 
 \subsubsection{Idle Time}
 
@@ -201,7 +205,9 @@ Potentially rename the section to something more fitting.
 
 \section{Results}
 
-Add content if applicable.
+So to begin with, it is evident that there are no pure synchronous and asynchronous systems. This is due to the fact that multiple cores working on the same task need to be synchronized in order to not interfere with shared resources as discussed in section \ref{sec:memory}. This means that the highest degree of parallelism is not achievable, as we need to account for the time it takes to synchronize the cores. 
+
+This is known as the "overhead" of multi-core processing, and is a key factor in determining the performance improvements of multi-core threading.
 
 \section{Discussion}
 

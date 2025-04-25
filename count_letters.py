@@ -5,6 +5,13 @@ def count_letters_in_latex(file_path):
         with open(file_path, 'r', encoding='utf-8') as file:
             content = file.read()
             
+            # Cut off everything after appendix
+            appendix_patterns = [r'\\appendix', r'\\begin\{appendix\}']
+            for pattern in appendix_patterns:
+                match = re.search(pattern, content, re.IGNORECASE)
+                if match:
+                    content = content[:match.start()]
+            
             # Remove LaTeX commands
             content = re.sub(r'\\[a-zA-Z]+(\[.*?\]|\{.*?\})*', '', content)
             

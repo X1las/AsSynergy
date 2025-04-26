@@ -208,6 +208,8 @@ C provides a library for multi-core threading called Posix, labeling their way o
 
 Before we get into the benchmarks of the different programming languages, it is important to disclose that the data was collected on a computer running Ubuntu 24.04.2 LTS with an intel Core i5-4460 CPU @ 3.2GHz, with 4 cores and 4 threads. The time measured was done so with various clocking methods depending on the programming language over the course of 5 runs, with the average time being taken as the final result. The code snippets used for the benchmarks can be found in the appendix.
 
+To begin with, we clocked the time it took to execute a simple count from 1 to 1 billion in the various languages to get a frame of references. This proved especially difficult for Java, as the JIL converts commonly used methods to bytecode to optimize the execution time. This meant that to get a proper benchmark we had to disable the JIT compiler by using the '-Xint' flag, which in turn made the execution time of Java significantly slower than the other languages, with the exception of Python.
+
 
 
 \section{Results}
@@ -229,6 +231,7 @@ Add content if applicable.
 \printbibliography
 % Ensure Biber is run to resolve undefined references
 
+\clearpage
 \appendix
 
 \section{Synchronous Run-time Snippets}

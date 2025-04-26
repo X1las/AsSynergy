@@ -1,0 +1,15 @@
+/shared/Projects/AsSynergy/sync_count_csharp/bin/Debug/net8.0/sync_count_csharp
+/shared/Projects/AsSynergy/sync_count_csharp/bin/Debug/net8.0/sync_count_csharp.deps.json
+/shared/Projects/AsSynergy/sync_count_csharp/bin/Debug/net8.0/sync_count_csharp.runtimeconfig.json
+/shared/Projects/AsSynergy/sync_count_csharp/bin/Debug/net8.0/sync_count_csharp.dll
+/shared/Projects/AsSynergy/sync_count_csharp/bin/Debug/net8.0/sync_count_csharp.pdb
+/shared/Projects/AsSynergy/sync_count_csharp/obj/Debug/net8.0/sync_count_csharp.GeneratedMSBuildEditorConfig.editorconfig
+/shared/Projects/AsSynergy/sync_count_csharp/obj/Debug/net8.0/sync_count_csharp.AssemblyInfoInputs.cache
+/shared/Projects/AsSynergy/sync_count_csharp/obj/Debug/net8.0/sync_count_csharp.AssemblyInfo.cs
+/shared/Projects/AsSynergy/sync_count_csharp/obj/Debug/net8.0/sync_count_csharp.csproj.CoreCompileInputs.cache
+/shared/Projects/AsSynergy/sync_count_csharp/obj/Debug/net8.0/sync_count_csharp.sourcelink.json
+/shared/Projects/AsSynergy/sync_count_csharp/obj/Debug/net8.0/sync_count_csharp.dll
+/shared/Projects/AsSynergy/sync_count_csharp/obj/Debug/net8.0/refint/sync_count_csharp.dll
+/shared/Projects/AsSynergy/sync_count_csharp/obj/Debug/net8.0/sync_count_csharp.pdb
+/shared/Projects/AsSynergy/sync_count_csharp/obj/Debug/net8.0/sync_count_csharp.genruntimeconfig.cache
+/shared/Projects/AsSynergy/sync_count_csharp/obj/Debug/net8.0/ref/sync_count_csharp.dll

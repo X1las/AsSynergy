@@ -1,6 +1,5 @@
 import multiprocessing as mp
 
-
 def count_to_high_number(start, end, q):
     count = 0
     for i in range(start, end):

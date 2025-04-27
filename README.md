@@ -24,3 +24,4 @@ With VM args: "-Xint" to disable JIT
 
 ## C Compiler
 GCC 13.3.0
+Thread Model: Posix

@@ -11,6 +11,7 @@
 \usepackage{xcolor}
 \usepackage{graphicx} % Add this package for including images
 \usepackage{hyperref} % Add this package for hyperlinks
+\usepackage{caption} % Add this package for caption customization
 
 \title{Multi-core Synergy: A Study of Performance Improvements Utilizing Multi-core Threading}
 \author{J. Wolffrom}
@@ -213,6 +214,14 @@ To begin with, we clocked the time it took to execute a simple count from 1 to 1
 
 
 \section{Results}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.8\textwidth]{../records/sync_exec_times.png}
+    \captionsetup{font=tiny, justification=centering}
+    \caption{Execution time of different programming languages when counting from 1 to 1-billion.}
+    \label{fig:sync-exec-times}
+\end{figure}
 
 So to begin with, it is evident that there are no pure synchronous and asynchronous systems. This is due to the fact that multiple cores working on the same task need to be synchronized in order to not interfere with shared resources as discussed in section \ref{sec:memory}. This means that the highest degree of parallelism is not achievable, as we need to account for the time it takes to synchronize the cores. 
 

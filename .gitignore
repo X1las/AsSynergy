@@ -31,4 +31,5 @@ report/*.run.xml
 *.target
 *.userprefs
 *.sln
+.venv
 .vscode

@@ -211,8 +211,7 @@ Before we get into the benchmarks of the different programming languages, it is 
 
 To begin with, we clocked the time it took to execute a simple count from 1 to 1 billion in the various languages to get a frame of references. This proved especially difficult for Java, as the JIL converts commonly used methods to bytecode to optimize the execution time. This meant that to get a proper benchmark we had to disable the JIT compiler by using the '-Xint' flag, which in turn made the execution time of Java significantly slower than the other languages, with the exception of Python.
 
-
-
+\clearpage
 \section{Results}
 
 \begin{figure}
@@ -222,8 +221,6 @@ To begin with, we clocked the time it took to execute a simple count from 1 to 1
     \caption{Execution time of different programming languages when counting from 1 to 1-billion.}
     \label{fig:sync-exec-times}
 \end{figure}
-
-So to begin with, it is evident that there are no pure synchronous and asynchronous systems. This is due to the fact that multiple cores working on the same task need to be synchronized in order to not interfere with shared resources as discussed in section \ref{sec:memory}. This means that the highest degree of parallelism is not achievable, as we need to account for the time it takes to synchronize the cores. 
 
 This is known as the "overhead" of multi-core processing, and is a key factor in determining the performance improvements of multi-core threading.
 

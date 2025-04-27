@@ -1,5 +1,5 @@
 # AsSynergy
-AsSynergy repository for benchmarking C, C#, Java and Python with and without Multi-Core Threading capabilities.
+Repository for benchmarking C, C#, Java and Python with and without Multi-Core Threading capabilities.
 
 # Requirements
 
@@ -10,7 +10,12 @@ Release: 3.12.3
 
 ### Modules
 
-- Multiprocessing
+Benchmarking:
+- Multiprocessing (version 0.70.18)
+
+Models:
+- matplotlib (version 3.10.1)
+- numpy (version 1.26.0)
 
 ## Java
 OpenJDK 21.0.6

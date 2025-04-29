@@ -10,9 +10,13 @@ Average time:
 
 Time in second:
 
+43.287073
+42.578996
+42.612031
+44.519242
+42.884020
 
-
-Average time: 
+Average time: 43.176272
 
 # Recorded CSharp Times
 

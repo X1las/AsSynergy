@@ -1,33 +1,30 @@
+import time
 import multiprocessing as mp
+import math
 
-def count_to_high_number(start, end, q):
+number_count = 1000000000
+cores = 4
+
+def count_numbers(start, end, step=5):
+    start_time = time.time()
     count = 0
-    for i in range(start, end):
+
+    for i in range(start, int(end)):
         count += 1
-    q.put(count)
+        
+        if count % math.floor(end/step) == 0:
+            print(f"Count reached: {count}")
 
-if __name__ == '__main__':
-    high_number = 1000000000
-    num_cores = mp.cpu_count()
-    chunk_size = high_number // num_cores
+    end_time = time.time()
 
-    processes = []
-    queues = []
+    print(f"Time taken to count from 1 to a billion: {end_time - start_time} seconds")
 
-    for i in range(num_cores):
-            q = mp.Queue()
-            start = i * chunk_size
-            end = (i + 1) * chunk_size if i != num_cores - 1 else high_number
-            p = mp.Process(target=count_to_high_number, args=(start, end, q))
-            processes.append(p)
-            queues.append(q)
-            p.start()
-    
-    total_count = 0
-    for q in queues:
-        total_count += q.get()
-    
-    for p in processes:
-        p.join()
-    
-    print(f'Total count: {total_count}')
+t1 = mp.Process(target=count_numbers, args=(1, number_count/cores))
+t2 = mp.Process(target=count_numbers, args=(1, number_count/cores))
+t3 = mp.Process(target=count_numbers, args=(1, number_count/cores))
+t4 = mp.Process(target=count_numbers, args=(1, number_count/cores))
+
+t1.start()
+t2.start()
+t3.start()
+t4.start()

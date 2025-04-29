@@ -211,23 +211,39 @@ Before we get into the benchmarks of the different programming languages, it is 
 
 To begin with, we clocked the time it took to execute a simple count from 1 to 1 billion in the various languages to get a frame of references. This proved especially difficult for Java, as the JIL converts commonly used methods to bytecode to optimize the execution time. This meant that to get a proper benchmark we had to disable the JIT compiler by using the '-Xint' flag, which in turn made the execution time of Java significantly slower than the other languages, with the exception of Python.
 
-\clearpage
+\newpage
 \section{Results}
 
-\begin{figure}
+As expected, the results of running the code snippets in multiple cores were significant performance increases, as comared to the single core. This makes sense, as evidently four cores are faster than one, however some of these results were quite surprising.
+
+\begin{figure}[!htb]
     \centering
     \includegraphics[width=0.8\textwidth]{../sync_records/sync_exec_times.png}
     \captionsetup{font=tiny, justification=centering}
-    \caption{Execution time of different programming languages when counting from 1 to 1-billion.}
+    \caption{Execution time comparison of different programming languages running synchronously when counting from 1 to 1-billion.}
     \label{fig:sync-exec-times}
 \end{figure}
 
-This is known as the "overhead" of multi-core processing, and is a key factor in determining the performance improvements of multi-core threading.
 
+The synchronous execution results above benchmark the time it took to compute the same task in each of the language. We saw expected results within most of the languages, with python having an average run time of 88 seconds, Java at 33, C\# 4 and C at a little less than 3 seconds. There was not much to note in these results, other than Java operating surprisingly slow when not using the JIT compiler.
+
+
+\begin{figure}[!htb]
+    \centering
+    \includegraphics[width=0.8\textwidth]{../async_records/async_exec_times.png}
+    \captionsetup{font=tiny, justification=centering}
+    \caption{Execution time comparison of different programming languages running asynchronously with multi-threading when counting from 1 to 1-billion.}
+    \label{fig:async-exec-times}
+\end{figure}
+
+The asynchronous execution results reveal a great deal about the efficiency of the different programming when using multiple cores. Python was able to achieve a time of 43 seconds on average which amounts to a little more than twice the performance increase. Java was able to achieve an astounding 8.7 seconds, a little less than 4 times the performance increase.
+
+\newpage
 \section{Discussion}
 
 Include thoughts about other programming languages.
 
+\newpage
 \section{Conclusion}
 
 Add content if applicable.
@@ -253,36 +269,74 @@ Add content if applicable.
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.8\textwidth]{../async_records/results_java/result_1.png}
-    \caption{First run of synchronous Java code execution.}
-    \label{fig:Java-runtime-1}
+    \caption{First run of asynchronous Java code execution.}
+    \label{fig:Java-async-runtime-1}
 \end{figure}
 
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.8\textwidth]{../async_records/results_java/result_2.png}
-    \caption{Second run of synchronous Java code execution.}
-    \label{fig:Java-runtime-2}
+    \caption{Second run of asynchronous Java code execution.}
+    \label{fig:Java-async-runtime-2}
 \end{figure}
 
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.8\textwidth]{../async_records/results_java/result_3.png}
-    \caption{Third run of synchronous Java code execution.}
-    \label{fig:Java-runtime-3}
+    \caption{Third run of asynchronous Java code execution.}
+    \label{fig:Java-async-runtime-3}
 \end{figure}
 
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.8\textwidth]{../async_records/results_java/result_4.png}
-    \caption{Fourth run of synchronous Java code execution.}
-    \label{fig:Java-runtime-4}
+    \caption{Fourth run of asynchronous Java code execution.}
+    \label{fig:Java-async-runtime-4}
 \end{figure}
 
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=0.8\textwidth]{../async_records/results_java/result_5.png}
-    \caption{Fifth run of synchronous Java code execution.}
-    \label{fig:Java-runtime-5}
+    \caption{Fifth run of asynchronous Java code execution.}
+    \label{fig:Java-async-runtime-5}
+\end{figure}
+
+\clearpage
+\subsection{Python Execution Times} 
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.8\textwidth]{../async_records/results_python/result_1.png}
+    \caption{First run of asynchronous Python code execution.}
+    \label{fig:Python-async-runtime-1}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.8\textwidth]{../async_records/results_python/result_2.png}
+    \caption{Second run of asynchronous Python code execution.}
+    \label{fig:Python-async-runtime-2}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.8\textwidth]{../async_records/results_python/result_3.png}
+    \caption{Third run of asynchronous Python code execution.}
+    \label{fig:Python-async-runtime-3}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.8\textwidth]{../async_records/results_python/result_4.png}
+    \caption{Fourth run of asynchronous Python code execution.}
+    \label{fig:Python-async-runtime-4}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.8\textwidth]{../async_records/results_python/result_5.png}
+    \caption{Fifth run of asynchronous Python code execution.}
+    \label{fig:Python-async-runtime-5}
 \end{figure}
 
 \clearpage

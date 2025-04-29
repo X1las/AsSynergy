@@ -33,5 +33,5 @@ def count_letters_in_latex(file_path):
         return f"Error: {str(e)}"
 
 # Count letters
-result = count_letters_in_latex(r'report/main.tex')
+result = count_letters_in_latex(r'report/report.tex')
 print(f"Number of letters (excluding LaTeX commands and technical content): {result}")

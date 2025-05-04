@@ -77,3 +77,22 @@ Should probably refer to the setup in past tense, as it will be when you finish 
 Should probably be past tense as well, as when the report is out it's something you "used" to evaluate it at the time
 
 Should maybe present AP and AR earlier in the theory, explaining what kind of metrics they are, including a reference whether it stays here or goes somewhere else
+
+# Feedback for me
+
+Introduction 50% too naive
+
+Introduction first quote too broad
+
+Narrow down research question
+
+Cache fighting for parallelizing
+
+Make sure the algorithms are parallelable
+
+More sources 
+
+Move the pc specs to limitations
+
+dictionary in appendix
+

@@ -1,45 +1,52 @@
 #include <stdio.h>
 #include <pthread.h>
+#include <time.h>
 
-#define NUM_THREADS 4
-#define COUNT_PER_THREAD 2500000
-#define TARGET 10000000
+double count = 1000000000/4; // 1 billion divided by 4 for 4 threads
+double steps = 10;
 
-// Shared counter variable and mutex for thread safety
-long counter = 0;
-pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
+void count_numbers() 
+{
+    double iter = 0;
 
-void* count_to_target(void* arg) {
-    int thread_id = *(int*)arg;
-    long start = thread_id * COUNT_PER_THREAD;
-    long end = start + COUNT_PER_THREAD;
+    clock_t start_time, end_time;
+    double time_taken;
 
-    for (long i = start; i < end; i++) {
-        pthread_mutex_lock(&mutex);
-        counter++;
-        pthread_mutex_unlock(&mutex);
-    }
-    return NULL;
-}
+    start_time = clock(); // Record start time
 
-int main() {
-    pthread_t threads[NUM_THREADS];
-    int thread_ids[NUM_THREADS];
-
-    // Create threads
-    for (int i = 0; i < NUM_THREADS; i++) {
-        thread_ids[i] = i;
-        if (pthread_create(&threads[i], NULL, count_to_target, &thread_ids[i]) != 0) {
-            printf("Failed to create thread %d\n", i);
-            return 1;
+    for (long long i = 1; i <= count; i++) 
+    {
+        iter += 1;
+        if (i % (long long)(count/steps) == 0) 
+        {
+            printf("Counted to %lld\n", i);
         }
     }
 
-    // Wait for all threads to complete
-    for (int i = 0; i < NUM_THREADS; i++) {
-        pthread_join(threads[i], NULL);
-    }
+    end_time = clock(); // Record end time
+    time_taken = ((double)(end_time - start_time)) / CLOCKS_PER_SEC; // Calculate elapsed time
 
-    printf("Final counter value: %ld\n", counter);
-    return 0;
+    printf("Time taken to count from 1 to a billion: %f seconds\n", time_taken);
+}
+
+int main() 
+{
+    // Create a pthread_t variable to store
+    // thread ID
+    pthread_t thread1;
+    pthread_t thread2;
+    pthread_t thread3;
+    pthread_t thread4;
+    
+    // Creating a new thread. 
+    pthread_create(&thread1, NULL, count_numbers, NULL);
+    pthread_create(&thread2, NULL, count_numbers, NULL);
+    pthread_create(&thread3, NULL, count_numbers, NULL);
+    pthread_create(&thread4, NULL, count_numbers, NULL);
+
+    pthread_join(thread1, NULL); // Wait for thread 1 to finish
+    pthread_join(thread2, NULL); // Wait for thread 2 to finish
+    pthread_join(thread3, NULL); // Wait for thread 3 to finish
+    pthread_join(thread4, NULL); // Wait for thread 4 to finish
+    printf("All threads have finished counting.\n");
 }

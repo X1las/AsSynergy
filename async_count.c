@@ -1,9 +1,10 @@
+#define _POSIX_C_SOURCE 200112L
 #include <stdio.h>
 #include <pthread.h>
 #include <time.h>
 #include <stdlib.h>
 
-double count = 20000000000/4; // 1 billion divided by 4 for 4 threads
+double count = 1000000000/4; // 1 billion divided by 4 for 4 threads
 double steps = 10;
 
 void* count_numbers(void* arg) 
@@ -60,7 +61,7 @@ int main()
                  (end_time.tv_nsec - start_time.tv_nsec) / 1000000000.0;
     
     printf("All threads have finished counting.\n");
-    printf("Total wall-clock time: %f seconds\n", total_time);
+    printf("Total time: %f seconds\n", total_time);
     
     return 0;
 }

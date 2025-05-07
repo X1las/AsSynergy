@@ -9,9 +9,9 @@ int main()
 
     start_time = clock(); // Record start time
 
-    for (long long i = 1; i <= 1000000000; i++) {
+    for (long long i = 1; i <= 20000000000; i++) {
         count += 1; // Increment count
-        if (i % 100000000 == 0) { // Print every 100 million
+        if (i % 2000000000 == 0) { // Print every 100 million
             printf("Counted to %lld\n", i);
         }
     }

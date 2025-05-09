@@ -1,9 +1,8 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 
 class SyncCount
 {
-    static void Main(string[] args)
+    static void Count()
     {
         Stopwatch stopwatch = new Stopwatch();
         stopwatch.Start();
@@ -19,5 +18,10 @@ class SyncCount
         stopwatch.Stop();
         Console.WriteLine("Counting complete!");
         Console.WriteLine($"Time elapsed: {stopwatch.Elapsed}");
+    }
+    static void Main(string[] args)
+    {
+        Console.WriteLine("Beginning Count");
+        Count();
     }
 }

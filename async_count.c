@@ -5,7 +5,7 @@
 #include <stdlib.h>
 
 double count = 1000000000/4; // 1 billion divided by 4 for 4 threads
-double steps = 10;
+double steps = 5;
 
 void* count_numbers(void* arg) 
 {

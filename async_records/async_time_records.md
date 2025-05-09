@@ -2,9 +2,13 @@
 
 Time in seconds:
 
+3.692103
+3.441684
+3.963834
+3.486281
+3.747453
 
-
-Average time: 
+Average time: 3.666271
 
 # Recorded Python Times
 
@@ -22,9 +26,13 @@ Average time: 43.176272
 
 Time in seconds:
 
+1.424913
+1.485104
+1.510500
+1.466701
+1.359745
 
-
-Average time: 
+Average time: 1.4493926
 
 # Java
 

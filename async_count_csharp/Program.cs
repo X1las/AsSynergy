@@ -1,48 +1,34 @@
-using System;
 using System.Diagnostics;
-using System.Threading;
-using System.Threading.Tasks;
 
-class ParallelCount
+class SyncCount
 {
-    static void Main(string[] args)
+    static void Count()
     {
         Stopwatch stopwatch = new Stopwatch();
         stopwatch.Start();
 
-        // Set the degree of parallelism to 4 cores
-        ParallelOptions parallelOptions = new ParallelOptions
+        for (int i = 0; i <= 250000000; i++)
         {
-            MaxDegreeOfParallelism = 4
-        };
-
-        // Use a thread-safe variable to track total count across all threads
-        object lockObject = new object();
-
-        // Divide the counting range into chunks
-        const long totalCount = 1_000_000_000;
-        const int chunks = 4;
-        long chunkSize = totalCount / chunks;
-
-        Parallel.For(0, chunks, parallelOptions, chunkIndex =>
-        {
-            long start = chunkIndex * chunkSize;
-            long end = (chunkIndex == chunks - 1) ? totalCount : (chunkIndex + 1) * chunkSize - 1;
-            
-            for (long i = start; i <= end; i++)
+            if (i % 25000000 == 0)
             {
-                if (i % 100_000_000 == 0)
-                {
-                    lock (lockObject)
-                    {
-                        Console.WriteLine($"Count reached: {i}");
-                    }
-                }
+                Console.WriteLine($"Count reached: {i}");
             }
-        });
+        }
 
         stopwatch.Stop();
         Console.WriteLine("Counting complete!");
         Console.WriteLine($"Time elapsed: {stopwatch.Elapsed}");
+    }
+    static void Main(string[] args)
+    {
+        Console.WriteLine("Beginning Count");
+        Thread Thr1 = new Thread(new ThreadStart(Count));
+        Thread Thr2 = new Thread(new ThreadStart(Count));
+        Thread Thr3 = new Thread(new ThreadStart(Count));
+        Thread Thr4 = new Thread(new ThreadStart(Count));
+        Thr1.Start();
+        Thr2.Start();
+        Thr3.Start();
+        Thr4.Start();
     }
 }

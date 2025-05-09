@@ -1,57 +1,68 @@
+# Abstract
+
+# Disclosure
+
 # Intro
+
+## Problem Area
+
+### Research Question
+
+### Sub-Questions
 
 # Limitations
 
-- only a few programming languages
-- no writing directly to the cores, reliance on schedulers
-- OS limited to windows and linux due to chipset architectures
+# Terminology
 
-# Threads & Processors
+- Can be moved to the appendix as a reference guide
 
-## Synchroniscity & Asynchroniscity
+# Theory
 
-### Subroutines & Coroutines
+### Efficiency & Performance Cores
 
-### Suspension
+# Subroutines & Coroutines
+
+# Threads
+
+## Threading in Python
+
+## Threading in C
+
+## Threading in C-Sharp
+
+## Threading in Java
+
+# Schedulers
+
+## Posix
+
+## OS Schedulers
+
+## .Net Scheduler
+
+## JVM Scheduler
 
 # Parallelism
 
-## Degree of paralellism
+## Degree of Parallelism
 
-### Parallel Execution Time (PET)
+## Parallel Execution Time (PET)
 
-### Load Balancing
+## Load Balancing
 
-### Idle Time
+## Idle Time
 
 # Memory
 
 ## Shared Memory
 
+## Local Caching
+
 ## Memory Access Time (MAT)
 
-# Schedulers
+# TRIN Model
 
-# TRIN model
+# Further Reading
 
-# State of the market
+## Performance and Efficiency cores
 
-## Python
-
-- main focus
-- GIL keeps it from using multiple cores
-- multiprocessing allows the use of more cores
-- libraries such as tensorflow and numpy use multiple cores in the background
-
-## Java
-
-- server oriented
-- handles thread distribution by itself (on the JVM)
-
-## C#
-
-- Similar to Java, but used primarily in game development
-
-## C
-
-- Very accessible and incredibly fast on unix systems

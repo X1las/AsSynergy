@@ -18,8 +18,6 @@
 
 # Theory
 
-### Efficiency & Performance Cores
-
 # Subroutines & Coroutines
 
 # Threads
@@ -66,3 +64,12 @@
 
 ## Performance and Efficiency cores
 
+# Data Collection
+
+## Experiment Setup
+
+## Results
+
+# Discussion
+
+# Conclusion

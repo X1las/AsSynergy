@@ -41,13 +41,15 @@ Due to the amount of variables that can affect the performance of a CPU, the res
 
 \section{Introduction}
 
-According to Moore's Law, the number of transistors on a microchip doubles every two years, leading to an exponential increase in computing power. However, according to \cite{Mattson2014} and \cite{Rauber2023}, this trend dwindled around 2005, as a limit was reached for how many transistors could be placed on a single computer chip without overheating and damaging the circuitry. Even by utilizing the most advanced tricks and optimizations available, the performance improvements we are seeing annually as of 2023 are somewhere around 3.5\% faster CPU's \parencite[p. 11]{Rauber2023} which is a far cry from the 50\% annual increases we were seeing in the early 2000's \parencite[p. 11]{Rauber2023}. 
+Quoted by \cite{Rauber2023}, "Moore’s law is an empirical
+observation which states that the number of transistors of a typical processor chip
+doubles every 18 to 24 months. This observation has first been made by Gordon
+Moore in 1965 and has been valid for more than 40 years. However, the transistor
+increase due to Moore’s law has slowed down during the last years" 
 
-\begin{quote}
-    \textit{\textcolor{darkgray}{Increased clock speeds meant higher heat generation and power consumption, necessitating more robust cooling solutions and improved power management techniques. The quest for ever-higher clock speeds eventually reached a plateau due to these limitations, leading to a shift in CPU design principles.}} - \parencite{mscodes} 
-\end{quote}
+\citeauthor{Rauber2023} posits that the number of transistors on a microchip doubles rougly every two years, leading to an exponential increase in computing power. However, according to \cite{Mattson2014} and \cite{Rauber2023}, this trend dwindled around 2005, as a limit was reached on how many transistors could be placed on a single computer chip without overheating and damaging the circuitry. Even by utilizing the most advanced tricks and optimizations available, the performance improvements we are seeing annually as of 2023 are somewhere around 3.5\% faster CPU clock speeds \parencite[p. 11]{Rauber2023} which is a far cry from the 50\% annual increases we were seeing in the early 2000's \parencite[p. 11]{Rauber2023}. 
 
-As a result of the processing speed ceiling, the focus has shifted from increasing the clock speeds of CPUs to adding more computational units to them. This has led to the rise in multi-core processors, which contain multiple processing units on a single chip, often referred to as "cores". These cores can execute multiple orders simultaneiously, which can lead to significant performance improvements in software applications. However, a discrepancy can be found in the communities that rely on these improvements.
+As a result of the processing speed ceiling, the focus has shifted from increasing the clock speeds of CPUs to adding more computational units to them. This has led to a rise in multi-core processors, which contain multiple processing units on a single CPU chipset, often referred to as "cores". These cores can execute multiple orders simultaneiously, which can lead to significant performance improvements in software applications. However, a discrepancy can be found in the communities that rely on these improvements. An article from IGN \parencite{Thomas2025} on picking optimal hardware for computer games describes it best:
 
 \begin{quote}
     \textit{\textcolor{darkgray}{While there are some PC games that love CPUs with a dozen or more cores, they’re few and far between. 
@@ -55,7 +57,7 @@ As a result of the processing speed ceiling, the focus has shifted from increasi
     - \parencite{Thomas2025}
 \end{quote}
 
-Within the gaming communities we're seeing a trend of diminishing returns, whereas what we should be seeing is an equivalance. There is a concensus that multi-core threading is the future of software development, and it has been for several years now, even as far back as 2005 \parencite{mscodes}, so the question is what's holding us back?
+A trend of diminishing returns can be seen, or rather felt on a consumer basis. Even people who purchase CPUs know to steer away from something that advertises a high amount of cores, as it's simply not worth it. Whereas the relationship between core-count and performance we should be seeing, in theory, should be an equivalence. It is evident that traditional single-core processors are opting out of the market in place of processors with more and more cores 
 
 \subsection{The Problem Area}
 
@@ -98,13 +100,7 @@ For the purpose of this paper, we will be using a lot of terminology that refers
 
 The term \textbf{core} refers to a single processing unit that is housen within a CPU, which will occur frequently in this paper. The term \textbf{thread} and \textbf{process} are often used interchangeably when going over the CPU architecture, but threads are generally smaller and are often used to refer to single tasks of which a process could contain many. This is not to be confused with a \textbf{processor} which is a kind of processing unit that is smaller in size than a core, and is often used to refer to the physical chip that is used to execute the orders.
 
-\section{Synchronous and Asynchronous systems}
-
-When looking at computing with multi-core systems it is important to understand the difference between a synchronous and asynchronous system. In general, when we talk about systems that use a single processing unit we usually always talk of a synchronous system, as orders are executed in order. When we scale this order up to several processing units on the same chipset we have what is referred to as a multicore processor, which is the focal point of this study. This multicore processor can then either be synchronous in order to keep to the order of executions that computers are used to, or we can choose to make it asynchronous, allowing all processing units to execute somewhat independently of each other. 
-
-The reality of synchronous and asynchronous systems is that they are not entirely separate. They are often used in conjunction with each other, as we need levels of synchronization in order to access shared resources between different cores. Simple tasks such as reading and writing to memory is determined by whether another core is using that memory at the same time, further complicating the matter.
-
-\subsubsection{Subroutines and Coroutines}
+\section{Subroutines and Coroutines}
 
 In order to understand asynchronous systems, it's important to note both subroutines and coroutines. 
 
@@ -127,7 +123,7 @@ asyncio.run(main())
 
 Which defines an asynchronous main function, or a coroutime that will print "Hello World" interspaced by one second. This shows the prominent 'yield' functionality. If we gave the function a target to yield to, we would in turn make the code synchronous in nature.
 
-\subsection{Threading}
+\section{Threading}
 
 The reason why subroutines and coroutines are important to understand is because they relate quite heavily to how threads operate. 
 
@@ -137,15 +133,49 @@ This process of suspending threads is what allows for the illusion of concurrenc
 
 This is not to be confused with multi-core processing, which is the ability to execute multiple threads at the same time with different cores. This is where the real performance improvements come from, as we can execute multiple tasks at the same time without having to switch as often.
 
+\subsection{Threading in different languages}
+
+\subsubsection{Threading in C}
+
+C, unlike the previous mentions, is a low-level programming language. It is a compiled language that is designed to be fast and efficient, making it a popular choice for system programming and embedded systems. C is often used in applications where performance is critical, such as operating systems, device drivers, and high-performance computing, as well as game engines. It is therefore a prime candidate for multi-core processing optimization, as wherever C is used in practice it is often done so with performance in mind.
+
+C provides a library for multi-core threading called Posix, labeling their way of threading as 'pthreads' or 'POSIX threads'. This library is a standard for multi-core threading in C, and comes pre-installed with unix systems such as Linux in the GCC compiler used for this study.
+
+\subsubsection{Threading in C-Sharp}
+
+C\# is a compiled language that is part of the C language family like Python, however where it differs is its striking resemblance to Java. It is a high-level language that is designed to be easy to use and understand, gathering a lot of attention due to its usage in the Unity game engine as well as developers transitioning from other languages. It is therefore a prime candidate for multi-core processing optimization as Java developers come potentially pre-equipped with a solid foundation of threading, as well as new game developers looking for performance improvements.
+
+The way C\# handles multi-core threading is not the same as Java, as it provides a library to assign tasks to threads, which in turn are managed by the operating system's scheduler. This means that C\# is able to utilize multiple cores in a program, but it is not as easy to implement as it is in Java. However, C\# does have some advantages over Java when it comes to performance, as it is a compiled language and therefore faster than Java. In addition, C\# has a more efficient memory management system than Java, which can lead to performance improvements in large programs.
+
+\subsubsection{Threading in Python}
+
+As it stands, Python is one of the most popular programming languages in the field of computer science. It is widely used in a variety of applications due to its simplicity and ease of use. However, it is an interpreted language, which means that it is not as fast as compiled languages like C or C++. In fact it is written in C, which is a compiled language. This means that in places it keeps the speed of C by pre-compiling certain commands, but in other places it is slower than C, with up to 10 times the execution in difference.
+
+This is important due to the way Python handles multi-core threading. By default, Python comes pre-installed with threading and asynchronous libraries, which allow for the use of multiple threads in a program, however the presence of the Global Interpreter Lock (GIL) means that only one core will be in use at any time. This means that the performance improvements of multi-core threading are not easily accessed, but by using libraries such as 'multiprocessing' or 'numpy', we can bypass the GIL using some of the same utilities in C. This allows us to use multiple cores in a program, but it is not as easy to implement as it is in other languages.
+
+\subsubsection{Threading in Java}
+
+Java comes with a built-in threading library, which allows for the use of multiple threads in a program, managed by the Java Virtual Machine (JVM). Usually this is accomplished by inheritance, designating a class as a thread, allowing it to use common threading methods such as sleep (suspension) and join (synchronization). This means that Java is able to utilize multiple cores in a program by use of their own scheduler, and the performance improvements are easily accessible. However, this is not without its drawbacks, as the JVM is an interpreted language, which means that it is not as fast as compiled languages like C or C++. In addition, the JVM is not as efficient as other languages when it comes to memory management, which can lead to performance issues in large programs. 
+
+\section{Schedulers}
+
+\subsection{Posix}
+
+\subsection{OS Scheduler}
+
+\subsection{JVM Scheduler}
+
 \section{Parallelism}
+
 This ability to execute multiple tasks simultaneously with multiple cores is known as "parallelism". In this section we will be looking at notable terms and concepts that are important to understand when working with multi-core systems.
+
 \subsection{Degree of Parallelism}
 
 In the field of parallel systems architecture we often talk about the degree of parallelism a system is capable of. This is a measure of how many tasks can be executed at the same time, and is often used to describe the performance improvements that a parallel system provides.
 
 This, in turn, coincides with the concept of "Potential Parallelism", which is the theoretical maximum degree of parallelism that a system can achieve. This is often used to describe the performance improvements that a parallel system can provide, and is often used as a benchmark for comparing different systems.
 
-\subsubsection{Parallel Execution Time (PET)}
+\subsection{Parallel Execution Time (PET)}
 
 In this context of degrees of parallelism, we often use measures such as "Parallel Execution Time" (PET) to quantitatively describe the time it takes for a parallel system to execute a given task. 
 
@@ -153,7 +183,7 @@ This execution time is measured across all functional units, or cores of a syste
 
 In terms of coding with multi-core threading, this means that "scheduling" time is included in the measure as well, as this is the time it takes for the operating system to assign tasks to different cores. This is important to note, as it means that the performance improvements of a parallel system are not just determined by the number of cores, but also by the efficiency of the scheduling algorithm used by the operating system.
 
-\subsubsection{Load Balancing}
+\subsection{Load Balancing}
 
 The term "Load Balancing" refers to the standard process of distributing tasks across multiple cores in a parallel system, such that tasks are executed equally across all cores. This is important to ensure that all cores are utilized effectively, and that no single core is overloaded with tasks while others are idle.
 
@@ -161,11 +191,18 @@ To this, it is important to note that not all cores are created equal, and that 
 
 Even within the same core type we can see a lot of variation in terms of performance, as some cores are designed to handle specific tasks better than others. This is known as "heterogeneous computing", and is an important consideration when designing parallel systems, but as mentioned earlier, in this paper we will only deal with intel x64 architecture.
 
-\subsubsection{Idle Time}
+\subsection{Idle Time}
 
 The time a processor cannot do anything useful but wait for more work.
 
+\section{Synchronous and Asynchronous systems}
+
+When looking at computing with multi-core systems it is important to understand the difference between a synchronous and asynchronous system. In general, when we talk about systems that use a single processing unit we usually always talk of a synchronous system, as orders are executed in order. When we scale this order up to several processing units on the same chipset we have what is referred to as a multicore processor, which is the focal point of this study. This multicore processor can then either be synchronous in order to keep to the order of executions that computers are used to, or we can choose to make it asynchronous, allowing all processing units to execute somewhat independently of each other. 
+
+The reality of synchronous and asynchronous systems is that they are not entirely separate. They are often used in conjunction with each other, as we need levels of synchronization in order to access shared resources between different cores. Simple tasks such as reading and writing to memory is determined by whether another core is using that memory at the same time, further complicating the matter.
+
 \section{Memory}
+
 \subsection{Shared Memory}
 
 Memory organization where the machine shares memory for all threads.
@@ -173,6 +210,8 @@ Memory organization where the machine shares memory for all threads.
 Synchronization plays a heavy role, for example by keeping threads from reading files before another has written to them.
 
 Often connected to the term "Thread".
+
+\subsection{Local Caching}
 
 \subsection{Memory Access Time (MAT)}
 
@@ -186,37 +225,20 @@ Add content if applicable.
 
 Add content if applicable.
 
-\section{State of the Field}
-\subsection{Python}
+\section{Further Reading}
 
-As it stands, Python is one of the most popular programming languages in the field of computer science. It is widely used in a variety of applications due to its simplicity and ease of use. However, it is an interpreted language, which means that it is not as fast as compiled languages like C or C++. In fact it is written in C, which is a compiled language. This means that in places it keeps the speed of C by pre-compiling certain commands, but in other places it is slower than C, with up to 10 times the execution in difference.
-
-This is important due to the way Python handles multi-core threading. By default, Python comes pre-installed with threading and asynchronous libraries, which allow for the use of multiple threads in a program, however the presence of the Global Interpreter Lock (GIL) means that only one core will be in use at any time. This means that the performance improvements of multi-core threading are not easily accessed, but by using libraries such as 'multiprocessing' or 'numpy', we can bypass the GIL using some of the same utilities in C. This allows us to use multiple cores in a program, but it is not as easy to implement as it is in other languages.
-
-\subsection{Java}
-
-Java comes with a built-in threading library, which allows for the use of multiple threads in a program, managed by the Java Virtual Machine (JVM). Usually this is accomplished by inheritance, designating a class as a thread, allowing it to use common threading methods such as sleep (suspension) and join (synchronization). This means that Java is able to utilize multiple cores in a program by use of their own scheduler, and the performance improvements are easily accessible. However, this is not without its drawbacks, as the JVM is an interpreted language, which means that it is not as fast as compiled languages like C or C++. In addition, the JVM is not as efficient as other languages when it comes to memory management, which can lead to performance issues in large programs. 
-
-\subsection{C\#}
-
-C\# is a compiled language that is part of the C language family like Python, however where it differs is its striking resemblance to Java. It is a high-level language that is designed to be easy to use and understand, gathering a lot of attention due to its usage in the Unity game engine as well as developers transitioning from other languages. It is therefore a prime candidate for multi-core processing optimization as Java developers come potentially pre-equipped with a solid foundation of threading, as well as new game developers looking for performance improvements.
-
-The way C\# handles multi-core threading is not the same as Java, as it provides a library to assign tasks to threads, which in turn are managed by the operating system's scheduler. This means that C\# is able to utilize multiple cores in a program, but it is not as easy to implement as it is in Java. However, C\# does have some advantages over Java when it comes to performance, as it is a compiled language and therefore faster than Java. In addition, C\# has a more efficient memory management system than Java, which can lead to performance improvements in large programs.
-
-\subsection{C}
-
-C, unlike the previous mentions, is a low-level programming language. It is a compiled language that is designed to be fast and efficient, making it a popular choice for system programming and embedded systems. C is often used in applications where performance is critical, such as operating systems, device drivers, and high-performance computing, as well as game engines. It is therefore a prime candidate for multi-core processing optimization, as wherever C is used in practice it is often done so with performance in mind.
-
-C provides a library for multi-core threading called Posix, labeling their way of threading as 'pthreads' or 'POSIX threads'. This library is a standard for multi-core threading in C, and comes pre-installed with unix systems such as Linux in the GCC compiler used for this study.
+efficiency cores vs performance cores
 
 \section{Data Collection}
+
+\section{Experiment Setup}
 
 Before we get into the benchmarks of the different programming languages, it is important to disclose that the data was collected on a computer running Ubuntu 24.04.2 LTS with an intel Core i5-4460 CPU @ 3.2GHz, with 4 cores and 4 threads. The time measured was done so with various clocking methods depending on the programming language over the course of 5 runs, with the average time being taken as the final result. The code snippets used for the benchmarks can be found in the appendix.
 
 To begin with, we clocked the time it took to execute a simple count from 1 to 1 billion in the various languages to get a frame of references. This proved especially difficult for Java, as the JIL converts commonly used methods to bytecode to optimize the execution time. This meant that to get a proper benchmark we had to disable the JIT compiler by using the '-Xint' flag, which in turn made the execution time of Java significantly slower than the other languages, with the exception of Python.
 
 \newpage
-\section{Results}
+\subsection{Results}
 
 As expected, the results of running the code snippets in multiple cores were significant performance increases, as comared to the single core. This makes sense, as evidently four cores are faster than one, however some of these results were quite surprising.
 

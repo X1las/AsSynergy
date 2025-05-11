@@ -47,21 +47,20 @@ doubles every 18 to 24 months. This observation has first been made by Gordon
 Moore in 1965 and has been valid for more than 40 years. However, the transistor
 increase due to Moore’s law has slowed down during the last years" 
 
-\citeauthor{Rauber2023} posits that the number of transistors on a microchip doubles rougly every two years, leading to an exponential increase in computing power. However, according to \cite{Mattson2014} and \cite{Rauber2023}, this trend dwindled around 2005, as a limit was reached on how many transistors could be placed on a single computer chip without overheating and damaging the circuitry. Even by utilizing the most advanced tricks and optimizations available, the performance improvements we are seeing annually as of 2023 are somewhere around 3.5\% faster CPU clock speeds \parencite[p. 11]{Rauber2023} which is a far cry from the 50\% annual increases we were seeing in the early 2000's \parencite[p. 11]{Rauber2023}. 
+\citeauthor{Rauber2023} posits that the number of transistors on a microchip used to double rougly every two years, leading to an exponential increase in computing power. However they, in accordance with \cite{Mattson2014}, agree that this trend has been dwindling since some time around 2005, as a limit was reached on how many transistors could be placed on a single computer chip without overheating and damaging the circuitry. Even by utilizing the most advanced tricks and optimizations available, the performance improvements we are seeing annually as of 2023 are somewhere around 3.5\% faster CPU clock speeds \parencite[p. 11]{Rauber2023} which is a far cry from the 50\% annual increases we were seeing in the early 2000's \parencite[p. 11]{Rauber2023}. 
 
 As a result of the processing speed ceiling, the focus has shifted from increasing the clock speeds of CPUs to adding more computational units to them. This has led to a rise in multi-core processors, which contain multiple processing units on a single CPU chipset, often referred to as "cores". These cores can execute multiple orders simultaneiously, which can lead to significant performance improvements in software applications. However, a discrepancy can be found in the communities that rely on these improvements. An article from IGN \parencite{Thomas2025} on picking optimal hardware for computer games describes it best:
 
 \begin{quote}
     \textit{\textcolor{darkgray}{While there are some PC games that love CPUs with a dozen or more cores, they’re few and far between. 
-    Instead, finding an 8-core, 16-thread processor with a high clock speed and a lot of L3 Cache is going to get you further than just adding more CPU cores to the equation. }} 
-    - \parencite{Thomas2025}
+    Instead, finding an 8-core, 16-thread processor with a high clock speed and a lot of L3 Cache is going to get you further than just adding more CPU cores to the equation. }}
 \end{quote}
 
 A trend of diminishing returns can be seen, or rather felt on a consumer basis. Even people who purchase CPUs know to steer away from something that advertises a high amount of cores, as it's simply not worth it. Whereas the relationship between core-count and performance we should be seeing, in theory, should be an equivalence. It is evident that traditional single-core processors are opting out of the market in place of processors with more and more cores \parencite{Smith2023}, but the performance improvements are not being felt by the end-user.
 
 \subsection{The Problem Area}
 
-If multi-core threading is the future, then it is essential to understand why it is not delivering the expected performance improvements it has the potential to deliver. \parencite[p. 12]{Rauber2023} mentions that simulations have shown that superscalar processors with up to four functional units yield substantial benefits over the use of a single functional unit. So in theory, it would seem there is a great potential to gain from utilizing multiple cores. Some of it has been utilized according to \textcite{Thomas2025}, as we are talking about 8-cores as opposed to one, but it has taken us 20 years to get to this point.
+If multi-core threading is the future, then it is essential to understand why it is not delivering the expected performance improvements it has the potential to deliver. \cite[p. 12]{Rauber2023} mentions that simulations have shown that superscalar processors with up to four functional units yield substantial benefits over the use of a single functional unit. So in theory, it would seem there is a great potential to gain from utilizing multiple cores. Some of it has been utilized according to \textcite{Thomas2025}, as we are talking about 8-cores as opposed to one, but it has taken us 20 years to get to this point.
 
 As such, this study aims to address this question of why multi-core optimization is so difficult to accomplish, if and/or how it can be improved, and what the potential benefits of doing so are. 
 
@@ -88,19 +87,27 @@ These questions serve as a guide for the study and will help to structure the re
 
 \section{Limitations}
 
-This study is limited in scope to just a handful of programming languages, and even in that case we will just be delving into the details of Python. This is due to the fact that Python isn't necessarily the best language in terms of performance, but is one of the slowest in terms of execution time. This makes python an exceptional candidate for multi-core threading, as it stands to gain the most from it.
+This study is limited in scope to a select group of programming languages, with a primary focus on Python. There are two key reasons for this focus:
 
-As such, the primary focus will be the theory behind multi-core processing in python with a few examples of how to implement it. We will be looking at how languages such as C, Java, and C\# handle multi-core processing, but we will not be going into detail on how to implement it in those languages. The focus will be strictly on comparisons for the sake of understanding key concepts like parallelism and concurrency.
+First, Python, while popular and versatile, is not optimized for performance compared to compiled languages. As an interpreted language, Python typically executes significantly slower than languages like C or C++. This performance gap makes Python an excellent candidate for examining the potential benefits of multi-core threading, as it stands to gain proportionally more from parallel execution improvements.
 
-In addition to the limits of programming languages, we will also be limiting the range of operating systems to just Windows and Linux. This is due to the fact that these share the same range of common chipsets as opposed to MacOS, which keeps to a very small range of chipsets. This is not to say that MacOS is not capable of multi-core processing, but rather that most of the practical applications of multi-core processing are applied to Windows and Linux systems.
+Second, by concentrating on Python while making comparative references to C, Java, and C\#, we can establish a clearer understanding of fundamental parallel computing concepts. These languages represent different approaches to multi-threading and showcase various implementation strategies for parallelism and concurrency.
+
+Additionally, this study limits its operating system scope to Windows and Linux environments. These operating systems share common chipset compatibility and represent the majority of systems where multi-core processing is applied in practical scenarios. While MacOS is certainly capable of multi-core processing, its hardware ecosystem is more restricted to Apple's specific chipsets, making Windows and Linux more representative of the broader multi-core computing landscape.
 
 \section{Subroutines and Coroutines}
 
-In order to understand asynchronous systems, it's important to note both subroutines and coroutines. 
+To understand multi-core systems effectively, we must first differentiate between synchronous and asynchronous execution paradigms. These concepts form the foundation for how tasks are distributed and managed across multiple processing units.
 
-Subroutines are the standard way of executing tasks in traditional programming, where the order of execution is determined by the order of which commands are written in the code. These are often known as Functions in programming languages, and are executed in a inear fashion, exiting once they finish executing. This makes then quite similar to coroutines, as they share the same functionality, except for the the ability to suspend their execution, also known by the 'yield' and 'resume' keywords. 
+In traditional single-core processing, operations follow a synchronous model where instructions execute sequentially in a predetermined order \parencite[p. 118]{Johnson2015}. When expanding to multiple processing units on the same chipset (a multi-core processor), we can maintain this synchronous approach for consistency or adopt an asynchronous model that allows processing units to operate with greater independence.
 
-This means that coroutines can be used to execute tasks in a non-linear fashion, allowing for more flexibility in the order of executions. Whether or not we have a coroutine defined as the target to 'yield' to also determines whether we are working with synchronous or asynchronous systems. 'yield'ing to a coroutine means that we are working with dependencies, pausing the execution of a program to wait for a result from another coroutine. 
+In practice, synchronous and asynchronous models are rarely implemented in their pure forms. Even highly parallel systems require synchronization mechanisms to coordinate access to shared resources. For instance, memory access operations must be coordinated when multiple cores need to read from or write to the same memory locations simultaneously.
+
+Two fundamental concepts in understanding execution models are subroutines and coroutines:
+
+Subroutines represent the conventional approach to task execution in programming. They are typically implemented as functions that execute sequentially, completing their entire operation before returning control to the calling code. Once a subroutine begins execution, it runs to completion without interruption, following a strict linear execution path.
+
+Coroutines, by contrast, extend the functionality of subroutines with the critical ability to suspend their execution at defined points and later resume from those same points. This suspension and resumption capability is often expressed through 'yield' and 'resume' operations. This fundamental difference enables coroutines to implement cooperative multitasking patterns where execution flow can be transferred between different tasks without requiring them to complete first.
 
 For an example, look at the following python snippet:
 \begin{verbatim}
@@ -115,7 +122,7 @@ async def main():
 asyncio.run(main())
 \end{verbatim}
 
-Which defines an asynchronous main function, or a coroutime that will print "Hello World" interspaced by one second. This shows the prominent 'yield' functionality. If we gave the function a target to yield to, we would in turn make the code synchronous in nature.
+Which defines an asynchronous main function, or a coroutine that will print "Hello World" interspaced by one second. This shows the prominent 'yield' functionality. If we gave the function a target to yield to, we would in turn make the code synchronous in nature.
 
 \section{Threading}
 
@@ -151,13 +158,9 @@ This is important due to the way Python handles multi-core threading. By default
 
 Java comes with a built-in threading library, which allows for the use of multiple threads in a program, managed by the Java Virtual Machine (JVM). Usually this is accomplished by inheritance, designating a class as a thread, allowing it to use common threading methods such as sleep (suspension) and join (synchronization). This means that Java is able to utilize multiple cores in a program by use of their own scheduler, and the performance improvements are easily accessible. However, this is not without its drawbacks, as the JVM is an interpreted language, which means that it is not as fast as compiled languages like C or C++. In addition, the JVM is not as efficient as other languages when it comes to memory management, which can lead to performance issues in large programs. 
 
-\section{Schedulers}
+\section{Posix}
 
-\subsection{Posix}
-
-\subsection{OS Scheduler}
-
-\subsection{JVM Scheduler}
+Posix is a standard for multi-core threading in C, and comes pre-installed with unix systems such as Linux in the GCC compiler used for this study. It is a library that provides a set of functions for creating and managing threads, as well as synchronizing access to shared resources. This means that Posix is able to utilize multiple cores in a program, but it is not as easy to implement as it is in other languages.
 
 \section{Parallelism}
 
@@ -168,6 +171,25 @@ This ability to execute multiple tasks simultaneously with multiple cores is kno
 In the field of parallel systems architecture we often talk about the degree of parallelism a system is capable of. This is a measure of how many tasks can be executed at the same time, and is often used to describe the performance improvements that a parallel system provides.
 
 This, in turn, coincides with the concept of "Potential Parallelism", which is the theoretical maximum degree of parallelism that a system can achieve. This is often used to describe the performance improvements that a parallel system can provide, and is often used as a benchmark for comparing different systems.
+
+\subsection{Thread Level Parallelism (TLP)}
+
+\subsection{Schedulers}
+
+Schedulers are the part of the operating system that is responsible for managing the execution of threads. They are responsible for deciding which thread to execute at any given time, and for managing the resources that are used by each thread. This includes managing the CPU, memory, and other resources that are used by the threads. The scheduler is responsible for ensuring that each thread gets a fair share of the resources, and that no single thread is allowed to monopolize the resources.
+
+Schedulers are often implemented as part of the operating system kernel, and are responsible for managing the execution of all threads in the system. This includes managing the scheduling of threads, as well as managing the resources that are used by each thread. The scheduler is responsible for ensuring that each thread gets a fair share of the resources, and that no single thread is allowed to monopolize the resources.
+
+\subsubsection{OS Schedulers}
+
+
+\subsubsection{.NET}
+
+The .NET framework is a software development platform developed by Microsoft. It provides a large library of pre-built functions and classes that can be used to create applications for Windows and other platforms. The .NET framework includes a built-in threading library, which allows for the use of multiple threads in a program, managed by the .NET runtime. This means that the .NET framework is able to utilize multiple cores in a program, but it is not as easy to implement as it is in other languages.
+
+\subsubsection{JVM}
+
+The Java Virtual Machine (JVM) is a software-based execution environment that allows Java programs to run on any platform that has a JVM installed. The JVM is responsible for managing the execution of Java programs, including the creation and management of threads. This means that the JVM is able to utilize multiple cores in a program, but it is not as easy to implement as it is in other languages.
 
 \subsection{Parallel Execution Time (PET)}
 
@@ -189,12 +211,6 @@ Even within the same core type we can see a lot of variation in terms of perform
 
 The time a processor cannot do anything useful but wait for more work.
 
-\section{Synchronous and Asynchronous systems}
-
-When looking at computing with multi-core systems it is important to understand the difference between a synchronous and asynchronous system. In general, when we talk about systems that use a single processing unit we usually always talk of a synchronous system, as orders are executed in order. When we scale this order up to several processing units on the same chipset we have what is referred to as a multicore processor, which is the focal point of this study. This multicore processor can then either be synchronous in order to keep to the order of executions that computers are used to, or we can choose to make it asynchronous, allowing all processing units to execute somewhat independently of each other. 
-
-The reality of synchronous and asynchronous systems is that they are not entirely separate. They are often used in conjunction with each other, as we need levels of synchronization in order to access shared resources between different cores. Simple tasks such as reading and writing to memory is determined by whether another core is using that memory at the same time, further complicating the matter.
-
 \section{Memory}
 
 \subsection{Shared Memory}
@@ -211,10 +227,6 @@ Often connected to the term "Thread".
 
 Add content if applicable.
 
-\section{Schedulers}
-
-Add content if applicable.
-
 \section{TRIN Model}
 
 Add content if applicable.
@@ -225,7 +237,7 @@ efficiency cores vs performance cores
 
 \section{Data Collection}
 
-\section{Experiment Setup}
+\subsection{Experiment Setup}
 
 Before we get into the benchmarks of the different programming languages, it is important to disclose that the data was collected on a computer running Ubuntu 24.04.2 LTS with an intel Core i5-4460 CPU @ 3.2GHz, with 4 cores and 4 threads. The time measured was done so with various clocking methods depending on the programming language over the course of 5 runs, with the average time being taken as the final result. The code snippets used for the benchmarks can be found in the appendix.
 

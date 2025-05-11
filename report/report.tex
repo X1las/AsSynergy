@@ -57,30 +57,30 @@ As a result of the processing speed ceiling, the focus has shifted from increasi
     - \parencite{Thomas2025}
 \end{quote}
 
-A trend of diminishing returns can be seen, or rather felt on a consumer basis. Even people who purchase CPUs know to steer away from something that advertises a high amount of cores, as it's simply not worth it. Whereas the relationship between core-count and performance we should be seeing, in theory, should be an equivalence. It is evident that traditional single-core processors are opting out of the market in place of processors with more and more cores 
+A trend of diminishing returns can be seen, or rather felt on a consumer basis. Even people who purchase CPUs know to steer away from something that advertises a high amount of cores, as it's simply not worth it. Whereas the relationship between core-count and performance we should be seeing, in theory, should be an equivalence. It is evident that traditional single-core processors are opting out of the market in place of processors with more and more cores \parencite{Smith2023}, but the performance improvements are not being felt by the end-user.
 
 \subsection{The Problem Area}
 
-If multi-core threading is the future, then it is essential to understand why it is not delivering the expected performance improvements it has the potential to deliver. \parencite[p. 12]{Rauber2023} mentions that simulations have shown that superscalar processors with up to four functional units yield substantial benefits over the use of a single functional unit. So in theory, it would seem there is a great potential to gain from utilizing multiple cores. Some of it has been utilized according to \textcite{Thomas2025}, as we are talking about 8-cores as opposed to one, but it has taken us well over 20 years to get to this point.
+If multi-core threading is the future, then it is essential to understand why it is not delivering the expected performance improvements it has the potential to deliver. \parencite[p. 12]{Rauber2023} mentions that simulations have shown that superscalar processors with up to four functional units yield substantial benefits over the use of a single functional unit. So in theory, it would seem there is a great potential to gain from utilizing multiple cores. Some of it has been utilized according to \textcite{Thomas2025}, as we are talking about 8-cores as opposed to one, but it has taken us 20 years to get to this point.
 
-As such, this study aims to address this question of why multi-code optimization is so difficult to accomplish, if and/or how it can be improved, and what the potential benefits of doing so are. In addition, we wish to bring to light the concept of multi-core threading or processing as a whole, seeing as it has slipped out of the public's eye in recent years. Now, more than ever, with the rise of machine learning and AI, we need to be able to utilize the full potential of our hardware.
+As such, this study aims to address this question of why multi-core optimization is so difficult to accomplish, if and/or how it can be improved, and what the potential benefits of doing so are. 
 
 \subsubsection{Research Question}
 
-This being said, there are limits to what can be achieved in such a short study, therefore we will be focusing heavily on the theory behind multi-core computing and how to get startet with it. 
+This being said, there are limits to what can be achieved in such a short study, therefore we will be focusing on threads and schedulers. The way to implement them, as well as how different programming languages handle them. This will be done by looking at the different threading libraries available in C, C\#, Java and Python, as well as the different schedulers that are used to manage them.
 
 The research question that we will be addressing is then as follows:
 
 \begin{quote}
-    \textit{What are the challenges of multi-core optimization, and how can they be overcome?}
+    \textit{What does multi-core threading performance look like, and how do different schedulers affect it?}
 \end{quote}
 
 This question can then be further broken down into the following sub-questions:
 
 \begin{itemize}
-    \item What does the standard architecture of a CPU look like? Is there one?
-    \item What is a thread, and what is a processor?
-    \item What frameworks are commonly used for multi-core threading?
+    \item What is a thread and how do you use it?
+    \item What is a scheduler and does where does it differentiate between systems and languages?
+    \item What performance increases and deficits does multi-core threading incur?
     \item What are the challenges of multi-core threading, and how can they be overcome?
 \end{itemize}
 
@@ -93,12 +93,6 @@ This study is limited in scope to just a handful of programming languages, and e
 As such, the primary focus will be the theory behind multi-core processing in python with a few examples of how to implement it. We will be looking at how languages such as C, Java, and C\# handle multi-core processing, but we will not be going into detail on how to implement it in those languages. The focus will be strictly on comparisons for the sake of understanding key concepts like parallelism and concurrency.
 
 In addition to the limits of programming languages, we will also be limiting the range of operating systems to just Windows and Linux. This is due to the fact that these share the same range of common chipsets as opposed to MacOS, which keeps to a very small range of chipsets. This is not to say that MacOS is not capable of multi-core processing, but rather that most of the practical applications of multi-core processing are applied to Windows and Linux systems.
-
-\section{Terminology}
-
-For the purpose of this paper, we will be using a lot of terminology that refers to the different sub-components of a computer. We expect the reader to have a basic understanding of what a computer is, and a general overview of its components, such as knowing what a CPU is and what role it plays. 
-
-The term \textbf{core} refers to a single processing unit that is housen within a CPU, which will occur frequently in this paper. The term \textbf{thread} and \textbf{process} are often used interchangeably when going over the CPU architecture, but threads are generally smaller and are often used to refer to single tasks of which a process could contain many. This is not to be confused with a \textbf{processor} which is a kind of processing unit that is smaller in size than a core, and is often used to refer to the physical chip that is used to execute the orders.
 
 \section{Subroutines and Coroutines}
 

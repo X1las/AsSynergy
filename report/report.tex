@@ -52,8 +52,8 @@ increase due to Moore’s law has slowed down during the last years"
 As a result of the processing speed ceiling, the focus has shifted from increasing the clock speeds of CPUs to adding more computational units to them. This has led to a rise in multi-core processors, which contain multiple processing units on a single CPU chipset, often referred to as "cores". These cores can execute multiple orders simultaneiously, which can lead to significant performance improvements in software applications. However, a discrepancy can be found in the communities that rely on these improvements. An article from IGN \parencite{Thomas2025} on picking optimal hardware for computer games describes it best:
 
 \begin{quote}
-    \textit{\textcolor{darkgray}{While there are some PC games that love CPUs with a dozen or more cores, they’re few and far between. 
-    Instead, finding an 8-core, 16-thread processor with a high clock speed and a lot of L3 Cache is going to get you further than just adding more CPU cores to the equation. }}
+    \textit{\textcolor{darkgray}{"While there are some PC games that love CPUs with a dozen or more cores, they’re few and far between. 
+    Instead, finding an 8-core, 16-thread processor with a high clock speed and a lot of L3 Cache is going to get you further than just adding more CPU cores to the equation". }}
 \end{quote}
 
 A trend of diminishing returns can be seen, or rather felt on a consumer basis. Even people who purchase CPUs know to steer away from something that advertises a high amount of cores, as it's simply not worth it. Whereas the relationship between core-count and performance we should be seeing, in theory, should be an equivalence. It is evident that traditional single-core processors are opting out of the market in place of processors with more and more cores \parencite{Smith2023}, but the performance improvements are not being felt by the end-user.
@@ -78,32 +78,40 @@ This question can then be further broken down into the following sub-questions:
 
 \begin{itemize}
     \item What is a thread and how do you use it?
-    \item What is a scheduler and does where does it differentiate between systems and languages?
+    \item What is a scheduler and does where does it differentiate between systems and programming languages?
     \item What performance increases and deficits does multi-core threading incur?
     \item What are the challenges of multi-core threading, and how can they be overcome?
 \end{itemize}
 
-These questions serve as a guide for the study and will help to structure the research process, beginning with a review of the literature on the topic.
+These questions serve to guide the study as a framework, outlining the key areas we need to understand in order to answer the main research question at large. But with that being said, we will be limiting the scope of this study in order to have a deeper understanding of the subject matter within their short confines.
 
-\section{Limitations}
+\subsubsection{Limitations}
 
-This study is limited in scope to a select group of programming languages, with a primary focus on Python. There are two key reasons for this focus:
+This study is limited in its research and data-collection to only a handful of programming languages: C, C\#, Java and Python. This is due to the fact that these languages are the most commonly used in the field of computer science, and therefore provide a lot of insight into the subject matter that is relevant to the readers. Whilst also common, they all handle multi-core threading in wildly different ways, which allows us to trace the remnants of different threading architectures and how they affect the performance of multi-core threading.
 
-First, Python, while popular and versatile, is not optimized for performance compared to compiled languages. As an interpreted language, Python typically executes significantly slower than languages like C or C++. This performance gap makes Python an excellent candidate for examining the potential benefits of multi-core threading, as it stands to gain proportionally more from parallel execution improvements.
+This being said, we will not delve into the specifics of each language, but rather focus on the threading libraries and how they are used in practice. This is to ensure that we can provide a comprehensive overview of the subject matter without getting bogged down in the details of each language.
 
-Second, by concentrating on Python while making comparative references to C, Java, and C\#, we can establish a clearer understanding of fundamental parallel computing concepts. These languages represent different approaches to multi-threading and showcase various implementation strategies for parallelism and concurrency.
+Additionally, this study limits its operating system scope to just Linux, as this was the easiest method of collecting data. This is due to linux having a lot of built-in tools and easy-to-install features that allowed for easy programming in all 4 different languages. This is not to say that the results are not applicable in other operating systems, in fact we encourage the reader to run the code snippets on a windows environment to see if the results are similar- However, we will not be able to provide any data on this, as it was not part of the study.
 
-Additionally, this study limits its operating system scope to Windows and Linux environments. These operating systems share common chipset compatibility and represent the majority of systems where multi-core processing is applied in practical scenarios. While MacOS is certainly capable of multi-core processing, its hardware ecosystem is more restricted to Apple's specific chipsets, making Windows and Linux more representative of the broader multi-core computing landscape.
+In addition to this, we will also only be talking about x64 architecture, as this is the most common architecture used in modern computers, and the architecture used in both the Intel and AMD processors tat most Windows and Linux machines run on. For the purpose of this study, we will only be looking at Intel processors, as they are the components readily available to us for testing. This is not to say that the results are not applicable to AMD processors, but we will not be able to provide any data on this, as it was not part of the study.
 
-\section{Subroutines and Coroutines}
+\section{Asynchronous Systems}
 
 To understand multi-core systems effectively, we must first differentiate between synchronous and asynchronous execution paradigms. These concepts form the foundation for how tasks are distributed and managed across multiple processing units.
 
-In traditional single-core processing, operations follow a synchronous model where instructions execute sequentially in a predetermined order \parencite[p. 118]{Johnson2015}. When expanding to multiple processing units on the same chipset (a multi-core processor), we can maintain this synchronous approach for consistency or adopt an asynchronous model that allows processing units to operate with greater independence.
+In traditional single-core processing, operations follow a synchronous model where instructions execute sequentially in a predetermined order \parencite[p. 118]{Johnson2015}. This means that each instruction must complete before the next one begins, creating a linear flow of execution. This model is straightforward and easy to understand, but even on a single-core processor there is still a need the need for running multiple processes at the same time. In addition to this, it's also inefficient to wait for one process to finish entirely before starting the next one, leading to the processor "idling" whilst waiting for I/O operations or resources to become available.
 
-In practice, synchronous and asynchronous models are rarely implemented in their pure forms. Even highly parallel systems require synchronization mechanisms to coordinate access to shared resources. For instance, memory access operations must be coordinated when multiple cores need to read from or write to the same memory locations simultaneously.
+\begin{quote}
+    \textit{\textcolor{darkgray}{"It is much easier to reason sequentially, doing only one thing at a time, than to understand situations where many things occur simultaneously." ... "Thus, while we are “parallel processors”, and we live in a world where multiple things happen at the same time, we usually reason by reduction to a sequential world."}} - \cite{Rajsbaum2020}
+\end{quote}
 
-Two fundamental concepts in understanding execution models are subroutines and coroutines:
+This creates a need for switching the processors attention, or "context switching" between different tasks, which is a key feature of modern operating systems. This allows the processor to switch between different tasks quickly, giving the illusion of everything running at the same time, also known as "concurrency"\parencite{Rajsbaum2020}. This is a common approach in single-core systems, where the operating system manages the execution of multiple processes by rapidly switching between them. This is often done using a time-slicing technique, where each process is given a small time slice to execute before the processor switches to the next one.
+
+\subsection{Subroutines and Coroutines}
+
+This is often seen by the programmer in the form of subroutines, which in laymans terms are just functions, a piece of code that can be called from anywhere in the program. This is a common approach in programming, where functions are used to encapsulate a specific piece of functionality and can be called from anywhere in the program, and often multiple times. This allows for code reuse and modularity, making it easier to write and maintain complex programs, but by expanding them to coroutines we can achieve a lot more.
+
+Coroutines carry an additional layer of complexity, as they allow for the suspension and resumption of execution at specific points. This means that a coroutine can "yield" control back to the calling code, before finishing its execution, allowing for more complex interactions between different parts of the program. This is often used in asynchronous programming, where coroutines can be used to handle I/O operations without blocking the main process. 
 
 Subroutines represent the conventional approach to task execution in programming. They are typically implemented as functions that execute sequentially, completing their entire operation before returning control to the calling code. Once a subroutine begins execution, it runs to completion without interruption, following a strict linear execution path.
 
@@ -123,6 +131,10 @@ asyncio.run(main())
 \end{verbatim}
 
 Which defines an asynchronous main function, or a coroutine that will print "Hello World" interspaced by one second. This shows the prominent 'yield' functionality. If we gave the function a target to yield to, we would in turn make the code synchronous in nature.
+
+When expanding to multiple processing units on the same chipset (a multi-core processor), we can maintain this synchronous approach for consistency or adopt an asynchronous model that allows processing units to operate with greater independence. 
+
+In practice, synchronous and asynchronous models are rarely implemented in their purest forms. Even highly parallel systems require synchronization mechanisms to coordinate access to shared resources. For instance, memory access operations must be coordinated when multiple cores need to read from or write to the same memory locations simultaneously. Even when we believe to have written a purely synchronous program, the underlying hardware and operating system may still introduce asynchronous behavior through context switching and resource management because of the need for concurrency.
 
 \section{Threading}
 

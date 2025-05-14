@@ -39,6 +39,8 @@ Any and all resources related to- and used in this study can be found here:
 
 Due to the amount of variables that can affect the performance of a CPU, the results of this study should be taken in comparison to each other, and not as a definitive measure of performance. It is encouraged to run the code snippets on your own machine to get a better understanding of the performance improvements that can be achieved with multi-core threading.
 
+In addition to this, this paper does fall within the scope of the Humanities and Technology department at the University of Roskilde, as it aims to understand how multi-core threading is being used in society today, and how it can be improved. More specifically, it falls within the dimension of Technological Systems and Artifacts (TSA) as we take a look at computer systems at large, and how people are using them- as well as how concepts within them are understood.
+
 \section{Introduction}
 
 Quoted by \cite{Rauber2023}, "Moore’s law is an empirical
@@ -109,13 +111,13 @@ This creates a need for switching the processors attention, or "context switchin
 
 \subsection{Subroutines and Coroutines}
 
-This is often seen by the programmer in the form of subroutines, which in laymans terms are just functions, a piece of code that can be called from anywhere in the program. This is a common approach in programming, where functions are used to encapsulate a specific piece of functionality and can be called from anywhere in the program, and often multiple times. This allows for code reuse and modularity, making it easier to write and maintain complex programs, but by expanding them to coroutines we can achieve a lot more.
+This is often seen by the programmer in the form of subroutines, which in layman's terms are just functions \parencite{Pyeatt2020}, a piece of code that can be called from anywhere in the program. This is a common approach in programming that most, if not all programmers are familiar with, where functions are used to encapsulate a specific piece of functionality and can be called from anywhere in the program, and often multiple times. This allows for code reuse and modularity, making it easier to write and maintain complex programs, but by expanding them to coroutines we can achieve a lot more, namely Concurrency and Asynchronousity. 
 
-Coroutines carry an additional layer of complexity, as they allow for the suspension and resumption of execution at specific points. This means that a coroutine can "yield" control back to the calling code, before finishing its execution, allowing for more complex interactions between different parts of the program. This is often used in asynchronous programming, where coroutines can be used to handle I/O operations without blocking the main process. 
+Coroutines carry an additional layer of complexity, as they allow for the suspension and resumption of execution at specific points \parencite{DeMouna2009}. This means that a coroutine can "yield" control back to the calling code, before finishing its execution, allowing for more complex interactions between different parts of the program. This is often used in asynchronous programming, where coroutines can be used to handle I/O operations without blocking the main process. 
 
-Subroutines represent the conventional approach to task execution in programming. They are typically implemented as functions that execute sequentially, completing their entire operation before returning control to the calling code. Once a subroutine begins execution, it runs to completion without interruption, following a strict linear execution path.
+Depending on how Coroutines are used, they can be either synchronous or asynchronous. In a synchronous coroutine, the coroutine will yield control back to the calling code, but will not return until it has finished executing. This means that the calling code will wait for the coroutine to finish before continuing. In an asynchronous coroutine, the coroutine will yield control back to the calling code, and will return immediately, allowing the calling code to continue executing.
 
-Coroutines, by contrast, extend the functionality of subroutines with the critical ability to suspend their execution at defined points and later resume from those same points. This suspension and resumption capability is often expressed through 'yield' and 'resume' operations. This fundamental difference enables coroutines to implement cooperative multitasking patterns where execution flow can be transferred between different tasks without requiring them to complete first.
+This suspension and resumption capability is often expressed through 'yield' and 'resume' operations, enabling coroutines to implement cooperative multitasking patterns where execution flow can be transferred between different tasks without requiring them to complete first.
 
 For an example, look at the following python snippet:
 \begin{verbatim}
@@ -130,7 +132,7 @@ async def main():
 asyncio.run(main())
 \end{verbatim}
 
-Which defines an asynchronous main function, or a coroutine that will print "Hello World" interspaced by one second. This shows the prominent 'yield' functionality. If we gave the function a target to yield to, we would in turn make the code synchronous in nature.
+Which defines an asynchronous main function, or a coroutine that will print "Hello World" interspaced by one second. This shows the prominent 'yield' operation. If we gave the function a target to yield to, we would in turn make the code "synchronous" in nature.
 
 When expanding to multiple processing units on the same chipset (a multi-core processor), we can maintain this synchronous approach for consistency or adopt an asynchronous model that allows processing units to operate with greater independence. 
 
@@ -138,7 +140,7 @@ In practice, synchronous and asynchronous models are rarely implemented in their
 
 \section{Threading}
 
-The reason why subroutines and coroutines are important to understand is because they relate quite heavily to how threads operate. 
+The reason why subroutines and coroutines are important to understand is because they relate quite heavily to how threads operate. In fact, a thread is in essense a coroutine that is managed by the operating system, allowing for multiple threads to be executed concurrently. This means that threads can be used to execute multiple tasks at the same time, without blocking the main process.
 
 Threading is a way of executing multiple different tasks at the same time in a computer operating system. Every program on a computer intrinsically define at least one thread of operations they want the operating system to execute. This is often referred to as the main thread, and is the thread that is executed first when a program is started, which can then spawn sub-threads to execute other tasks. The OS then handles what order threads are executed in using what is known as a "Scheduler", this scheduler is then also responsible for 'Suspending' threads to make it seem like all programs are executed concurrently. 
 
@@ -147,6 +149,10 @@ This process of suspending threads is what allows for the illusion of concurrenc
 This is not to be confused with multi-core processing, which is the ability to execute multiple threads at the same time with different cores. This is where the real performance improvements come from, as we can execute multiple tasks at the same time without having to switch as often.
 
 \subsection{Threading in different languages}
+
+\subsubsection{Posix}
+
+Posix is a standard for multi-core threading in C, and comes pre-installed with unix systems such as Linux in the GCC compiler used for this study. It is a library that provides a set of functions for creating and managing threads, as well as synchronizing access to shared resources. This means that Posix is able to utilize multiple cores in a program, but it is not as easy to implement as it is in other languages.
 
 \subsubsection{Threading in C}
 
@@ -169,10 +175,6 @@ This is important due to the way Python handles multi-core threading. By default
 \subsubsection{Threading in Java}
 
 Java comes with a built-in threading library, which allows for the use of multiple threads in a program, managed by the Java Virtual Machine (JVM). Usually this is accomplished by inheritance, designating a class as a thread, allowing it to use common threading methods such as sleep (suspension) and join (synchronization). This means that Java is able to utilize multiple cores in a program by use of their own scheduler, and the performance improvements are easily accessible. However, this is not without its drawbacks, as the JVM is an interpreted language, which means that it is not as fast as compiled languages like C or C++. In addition, the JVM is not as efficient as other languages when it comes to memory management, which can lead to performance issues in large programs. 
-
-\section{Posix}
-
-Posix is a standard for multi-core threading in C, and comes pre-installed with unix systems such as Linux in the GCC compiler used for this study. It is a library that provides a set of functions for creating and managing threads, as well as synchronizing access to shared resources. This means that Posix is able to utilize multiple cores in a program, but it is not as easy to implement as it is in other languages.
 
 \section{Parallelism}
 
@@ -236,10 +238,6 @@ Often connected to the term "Thread".
 \subsection{Local Caching}
 
 \subsection{Memory Access Time (MAT)}
-
-Add content if applicable.
-
-\section{TRIN Model}
 
 Add content if applicable.
 

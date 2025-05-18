@@ -4,7 +4,8 @@
 \usepackage[
     backend=biber,
     style=apa,
-    citestyle=authoryear
+    citestyle=authoryear,
+    sortcites=true
 ]{biblatex}
 \setlength{\bibitemsep}{0.5em}
 \addbibresource{references.bib}
@@ -140,19 +141,29 @@ In practice, synchronous and asynchronous models are rarely implemented in their
 
 \section{Threading}
 
-The reason why subroutines and coroutines are important to understand is because they relate quite heavily to how threads operate. In fact, a thread is in essense a coroutine that is managed by the operating system, allowing for multiple threads to be executed concurrently. This means that threads can be used to execute multiple tasks at the same time, without blocking the main process.
+A thread is often described as a lightweight process, as well as the smallest unit of execution within a process \parencite{Rauber2023}. A process often being associated with or connected to having distributed memory\parencite[p. 4, 27]{Rauber2023} as opposed to threads, which are often associated with shared memory. 
 
-Threading is a way of executing multiple different tasks at the same time in a computer operating system. Every program on a computer intrinsically define at least one thread of operations they want the operating system to execute. This is often referred to as the main thread, and is the thread that is executed first when a program is started, which can then spawn sub-threads to execute other tasks. The OS then handles what order threads are executed in using what is known as a "Scheduler", this scheduler is then also responsible for 'Suspending' threads to make it seem like all programs are executed concurrently. 
+The reason why subroutines and coroutines relate to this topic, is because a thread is in practice a coroutine, and as will be demonstrated later, usually is passed by a function. Threads can be suspended mid-execution and yield to other processes akin to coroutines, such that the processor it runs on always has something to do. Threads are often used to implement parallelism in a program\parencite[p. 27]{Rauber2023}, allowing for multiple tasks to be executed simultaneously. This is an achievment that can be achieved in single-core systems as well, by continuous context switching between different threads\parencite{Rauber2023} we achieve the illusion of multitasking, also known as "Concurrency". Concurrency is the ability of a system to execute multiple tasks simultaneously, even if they are not actually running at the same time, and it extends to multi-core systems as well, which we will be adressing here as well as how to contribute to it by using various threading libraries.
 
-This process of suspending threads is what allows for the illusion of concurrency, allowing the operating system to seemingly execute multiple threads at the same time by switching back and forth rapidly between tasks. This is known as "context switching", and is a key feature of modern operating systems, making even a single core processing system capable of multi-tasking.
+\subsection{Kernel- and User Threads}
 
-This is not to be confused with multi-core processing, which is the ability to execute multiple threads at the same time with different cores. This is where the real performance improvements come from, as we can execute multiple tasks at the same time without having to switch as often.
+Threads are divided into two main categories: "User-threads" and "Kernel-threads" \parencite[p. 27]{Rauber2023}. User threads being the threads closest to the user or programmer, and kernel threads being the threads that are created and managed by the operating system itself.
+
+\begin{quote}
+    \textit{\textcolor{darkgray}{"The kernel threads are mapped by the operating system to processors or cores for execution. User threads are managed by the specific programming environment used and are mapped to kernel threads for execution. The mapping algorithms as well as the exact number of processors or cores can be hidden from the user by the operating system."}} - \parencite[p. 27]{Rauber2023}
+\end{quote}
+
+These user-threads are managed by the afforementioned libraries particular to the programming languages used, and are mapped to kernel threads for execution. This means that the operating system is responsible for managing the execution of kernel threads, while user threads are managed by the particular programming environment used. This allows for a high degree of flexibility and control over the execution of threads, but it also means that the performance of user threads can be affected by the performance of the kernel threads they are mapped to, as well as the mapping algorithms used by their own programming environment. This is important to note, as it adds additional layers of complexity to measuring the performance of threads, as the affected performance of user threads can vary depending on the operating system and programming environment used.
 
 \subsection{Threading in different languages}
 
+In order to create threads in a program, we often use a threading library that is provided by the programming language. Usually, this is done by creating a function or subroutine that pertains the code to be run independently, using the threading library to pass the function to its own thread. This will become clearer in the following sections, where we will be looking language specific methods of threading in the afforementioned programming languages, starting with the POSIX library, as it relates to C and Python.
+
 \subsubsection{Posix}
 
-Posix is a standard for multi-core threading in C, and comes pre-installed with unix systems such as Linux in the GCC compiler used for this study. It is a library that provides a set of functions for creating and managing threads, as well as synchronizing access to shared resources. This means that Posix is able to utilize multiple cores in a program, but it is not as easy to implement as it is in other languages.
+POSIX, or "Portable Operating System Interface"\parencite{Open2025,GNU2025}, is a set of operating system standards that include features such as a shell, file system, and threading. It is a standard for multi-threading and comes pre-installed with the GCC compiler\parencite{GNU2025} used for this study. POSIX carries a certain level of overhead, as it is not exclusively a threading library, nor is it a library made for C specifically. It is a standard that is implemented in C, but languages such as Python utilize it as well when using the 'multiprocessing' library. When used in this context of multi-threading, it is referred to as 'pthreads', and will be referred to as such in this paper.
+
+Pthreads are essentially user-threads that are created and managed by the POSIX library, but the library itself also allows for the creation of kernel threads. In the context of the programming languages we will be looking at, posix is the only library that offers the ability to create kernel threads directly. 
 
 \subsubsection{Threading in C}
 

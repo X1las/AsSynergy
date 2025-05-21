@@ -161,31 +161,135 @@ In order to create threads in a program, we often use a threading library that i
 
 \subsubsection{Posix}
 
-POSIX, or "Portable Operating System Interface"\parencite{Open2025,GNU2025}, is a set of operating system standards that include features such as a shell, file system, and threading. It is a standard for multi-threading and comes pre-installed with the GCC compiler\parencite{GNU2025} used for this study. POSIX carries a certain level of overhead, as it is not exclusively a threading library, nor is it a library made for C specifically. It is a standard that is implemented in C, but languages such as Python utilize it as well when using the 'multiprocessing' library. When used in this context of multi-threading, it is referred to as 'pthreads', and will be referred to as such in this paper.
+POSIX, or "Portable Operating System Interface"\parencite{GNUPOSIX,POSIXDocs}, is a set of operating system standards that include features such as a shell, file system, and threading. It is a standard for multi-threading and comes pre-installed with the GCC compiler\parencite{GNUPOSIX} used for this study. POSIX carries a certain level of overhead, as it is not exclusively a threading library, nor is it a library made for C specifically. It is a standard that is implemented in C, but languages such as Python utilize it as well when using the 'multiprocessing' library. When used in this context of multi-threading, it is referred to as 'pthreads', and will be referred to as such in this paper.
 
-Pthreads are essentially user-threads that are created and managed by the POSIX library, but the library itself also allows for the creation of kernel threads. In the context of the programming languages we will be looking at, posix is the only library that offers the ability to create kernel threads directly. 
+Pthreads are essentially user-threads that are created and managed by the POSIX library, but the library itself also allows for the creation of kernel threads. In the context of the programming languages we will be looking at, posix is the only library that offers the ability to create kernel threads directly. For further reading on the POSIX standard, for further reading see \fullcite{Stevens2005} on programming in UNIX environments, as well as \fullcite{Harbour2003} an older article on posix functionality that still holds relevance.
 
 \subsubsection{Threading in C}
 
-C, unlike the previous mentions, is a low-level programming language. It is a compiled language that is designed to be fast and efficient, making it a popular choice for system programming and embedded systems. C is often used in applications where performance is critical, such as operating systems, device drivers, and high-performance computing, as well as game engines. It is therefore a prime candidate for multi-core processing optimization, as wherever C is used in practice it is often done so with performance in mind.
+As previously mentioned, in order to accomplish multi-core threading in C we make use of the POSIX library, which comes pre-installed in the GCC compiler used to compile C-code on unix systems. This library provides access to pthreads, which we can easily invoke by including the header file 'pthread.h' in our code:
 
-C provides a library for multi-core threading called Posix, labeling their way of threading as 'pthreads' or 'POSIX threads'. This library is a standard for multi-core threading in C, and comes pre-installed with unix systems such as Linux in the GCC compiler used for this study.
+\begin{verbatim}
+#include <pthread.h>
+\end{verbatim}
+
+After this, we can create a thread by first making a pthread variable to pass on to the pthread\_create function, which takes a function pointer as its first argument. This function pointer is the function that will be executed in the new thread, and it must have a specific signature in order to be used with pthreads. The signature is as follows:
+
+\begin{verbatim}
+void *function_name(void *arg) {
+    // Code to be executed in the new thread
+}
+
+int main() {
+    pthread_t thread;
+    pthread_create(&thread, NULL, function_name, NULL);
+
+    return 0;
+}
+\end{verbatim}
+
+Posix provides the ability to work with multi-core systems by default, unless the used specifies something different by declaring "AFFINITY":
+
+\begin{verbatim}
+#include <pthread.h>
+#include <sched.h>
+#include <stdio.h>
+
+void *function_name(void *arg) {
+    // Code to be executed in the new thread
+    return NULL;
+}
+
+int main() {
+    pthread_t thread;
+    cpu_set_t cpuset;
+
+    // Set the CPU affinity for the thread
+    CPU_ZERO(&cpuset);
+    CPU_SET(0, &cpuset); // Set the thread to run on CPU 0
+
+    pthread_create(&thread, NULL, function_name, NULL);
+    pthread_setaffinity_np(thread, sizeof(cpu_set_t), &cpuset);
+
+    pthread_join(thread, NULL); // Wait for the thread to finish
+
+    return 0;
+}
+\end{verbatim}
+
+What this code does is create a thread that will run on CPU 0, and then wait for the thread to finish before exiting the program. This is a simple example of how to use pthreads to create a thread in C, but it is important to note that this is not the only way to do it. There are many other functions and options available in the pthreads library that can be used to create and manage threads, such as pthread\_join, pthread\_detach, and pthread\_cancel. These functions allow for more advanced thread management, such as waiting for a thread to finish, detaching a thread from the main process, or canceling a thread that is no longer needed. For further reading on the pthreads library, see the official documentation: \fullcite{PthreadDocs}.
 
 \subsubsection{Threading in C-Sharp}
 
-C\# is a compiled language that is part of the C language family like Python, however where it differs is its striking resemblance to Java. It is a high-level language that is designed to be easy to use and understand, gathering a lot of attention due to its usage in the Unity game engine as well as developers transitioning from other languages. It is therefore a prime candidate for multi-core processing optimization as Java developers come potentially pre-equipped with a solid foundation of threading, as well as new game developers looking for performance improvements.
+C\# just like C, is a compiled language that comes from the C language family like source Python \parencite{PythonFAQ}, however where it differs is its striking resemblance to Java and its use of object oriented programming. To get started with threading in C\#, the process is different from environment to environment. Using the .NET framework for Unix, threads come pre-installed and ready for use by simple instantiating a thread object and passing it a function to run. 
 
-The way C\# handles multi-core threading is not the same as Java, as it provides a library to assign tasks to threads, which in turn are managed by the operating system's scheduler. This means that C\# is able to utilize multiple cores in a program, but it is not as easy to implement as it is in Java. However, C\# does have some advantages over Java when it comes to performance, as it is a compiled language and therefore faster than Java. In addition, C\# has a more efficient memory management system than Java, which can lead to performance improvements in large programs.
+\begin{verbatim}
+class thread_example {
+
+    static void MyThreadFunction() {
+        // Code to be executed in the new thread
+    }
+
+    static void Main(string[] args) {
+        Thread thread = new Thread(new ThreadStart(MyThreadFunction));
+        thread.Start();
+    }
+}
+\end{verbatim}
+
+Not too dissimilar from how it was carried out in C, we create a function wherein we write the code to be executed in the new thread, and then we create a thread object that takes a function pointer as its argument. This is a simple example of how to use threads in C\#, it includes further functionality that we won't get into depths about in this paper, but further reading can be found in the official documentation: \fullcite{CSThreadClass} as well as this article on its implementation: \fullcite{Wagner2022}. In addition, it is possible to set the CPU affinity of a thread in C\# just like in C, but this is not as straightforward, see this documentation for more information: \parencite{CSProcessorAffinity}.
 
 \subsubsection{Threading in Python}
 
-As it stands, Python is one of the most popular programming languages in the field of computer science. It is widely used in a variety of applications due to its simplicity and ease of use. However, it is an interpreted language, which means that it is not as fast as compiled languages like C or C++. In fact it is written in C, which is a compiled language. This means that in places it keeps the speed of C by pre-compiling certain commands, but in other places it is slower than C, with up to 10 times the execution in difference.
+Threading in python is carried out in a handful of ways, but the most common way is to use the 'threading' library\parencite{PythonThreading}, which comes pre-installed with Python. 
 
-This is important due to the way Python handles multi-core threading. By default, Python comes pre-installed with threading and asynchronous libraries, which allow for the use of multiple threads in a program, however the presence of the Global Interpreter Lock (GIL) means that only one core will be in use at any time. This means that the performance improvements of multi-core threading are not easily accessed, but by using libraries such as 'multiprocessing' or 'numpy', we can bypass the GIL using some of the same utilities in C. This allows us to use multiple cores in a program, but it is not as easy to implement as it is in other languages.
+\begin{verbatim}
+import threading
+
+def my_thread_function():
+    # Code to be executed in the new thread
+    pass
+
+thread = threading.Thread(target=my_thread_function)
+thread.start()
+\end{verbatim}
+
+This is again a simple example of how to use threads, but it is important to note that due to the Global Interpreter Lock (GIL) in Python, native threads can only run on a single core\parencite{PythonGIL}. This doesn't mean there are no ways of achieving multi-core threading in Python, as there are libraries such as 'multiprocessing' that allow for the creation of multiple processes that can run on different cores:
+
+\begin{verbatim}
+import multiprocessing
+
+def my_process_function():
+    # Code to be executed in the new process
+    pass
+
+thread = multiprocessing.Process(target=my_process_function)
+thread.start()
+\end{verbatim}
+
+Despite being labelled as processes, these are still threads as they utilize run on POSIX under the hood\parencite{PythonMultiprocessing}, and are therefore still subject to the same limitations as pthreads. But even so, multi-core threading can be achieved in Python with relative ease, however it's difficult to notice the performance improvements as the GIL is still present\parencite{PythonGIL}. This means that even though we are creating multiple processes, they are still limited by the GIL, and therefore cannot take full advantage of multi-core systems. This is an important consideration when using Python for multi-core threading, as it can lead to performance issues if not handled correctly. For further reading on the threading library, see the official multiprocessing documentation: \fullcite{PythonMultiprocessing}
 
 \subsubsection{Threading in Java}
 
-Java comes with a built-in threading library, which allows for the use of multiple threads in a program, managed by the Java Virtual Machine (JVM). Usually this is accomplished by inheritance, designating a class as a thread, allowing it to use common threading methods such as sleep (suspension) and join (synchronization). This means that Java is able to utilize multiple cores in a program by use of their own scheduler, and the performance improvements are easily accessible. However, this is not without its drawbacks, as the JVM is an interpreted language, which means that it is not as fast as compiled languages like C or C++. In addition, the JVM is not as efficient as other languages when it comes to memory management, which can lead to performance issues in large programs. 
+Java Standard Edition (JSE) comes with a built-in threading library\parencite{JavaThreadClass}, usually this functionality is accomplished by inheritance, extending a class from 'Thread' and including a 'run' method that contains the code to be executed in the new thread:
+
+\begin{verbatim}
+
+class MyThread extends Thread {
+    public void run() {
+        // Code to be executed in the new thread
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        MyThread thread = new MyThread();
+        thread.start();
+    }
+}
+\end{verbatim}
+
+This is slightly different from other languages, as it uses inheritance to create a new thread class that extends the Thread class. This means that the thread objects created from this class will have all its methods and properties included, meaning we don't have to pass a function pointed to the thread object before running it, instead we just call the 'start' method on the thread object. In terms of multi-core threading, Java Virtual Machine (JVM) is able to utilize multiple cores in a program, as they are allotted a pool of Kernel Threads to operate with. For more information on the Java threading library, see the official documentation: \fullcite{JavaThreadClass}.
 
 \section{Parallelism}
 

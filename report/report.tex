@@ -15,7 +15,7 @@
 \usepackage{hyperref} % Add this package for hyperlinks
 \usepackage{caption} % Add this package for caption customization
 
-\title{Multi-core Synergy: A Study of Performance Improvements Utilizing Multi-core Threading}
+\title{Multi-core Synergy: A Study of Performance in Multi-core Threading Systems}
 \author{J. Wolffrom}
 \date{\today}
 
@@ -74,35 +74,33 @@ This being said, there are limits to what can be achieved in such a short study,
 The research question that we will be addressing is then as follows:
 
 \begin{quote}
-    \textit{What does multi-core threading performance look like, and how do different schedulers affect it?}
+    \textit{What does multi-core offer in terms of performance improvements to different programming languages, and what stops us from utilizing its full potential?}
 \end{quote}
 
-This question can then be further broken down into the following sub-questions:
+Then to answer this question, we will have to ask the following sub-questions:
 
 \begin{itemize}
-    \item What is a thread and how do you use it?
-    \item What is a scheduler and does where does it differentiate between systems and programming languages?
+    \item What are threads and how do they help optimize parallel systems?
+    \item How does one create threads in practice and what similarities are there between programming languages?
     \item What performance increases and deficits does multi-core threading incur?
     \item What are the challenges of multi-core threading, and how can they be overcome?
 \end{itemize}
 
-These questions serve to guide the study as a framework, outlining the key areas we need to understand in order to answer the main research question at large. But with that being said, we will be limiting the scope of this study in order to have a deeper understanding of the subject matter within their short confines.
+These questions should serve to answer the most pressing matters related to this study, namely what threads are, where they are used, how to make them and what it shows us in terms of performance. The challenges of multi-core threading will be addressed in the discussion section, where we will look at the results of the benchmarks and how they relate to the research question, but before that we will need to adress the limitations of this study, as well as the theoretical background that is necessary to understand the subject matter.
 
 \subsubsection{Limitations}
 
-This study is limited in its research and data-collection to only a handful of programming languages: C, C\#, Java and Python. This is due to the fact that these languages are the most commonly used in the field of computer science, and therefore provide a lot of insight into the subject matter that is relevant to the readers. Whilst also common, they all handle multi-core threading in wildly different ways, which allows us to trace the remnants of different threading architectures and how they affect the performance of multi-core threading.
+This study is limited in its research and data-collection to only a handful of programming languages: C, C\#, Java and Python. This is due to limitations in time and resources, as well as the fact that these languages are some of the most commonly known programming languages in the field, leaving the readers with at least one language they are familiar with. This sample size should be sufficient to provide a good overview of how threading is implemented in general, as well as how it is used in practice. 
 
-This being said, we will not delve into the specifics of each language, but rather focus on the threading libraries and how they are used in practice. This is to ensure that we can provide a comprehensive overview of the subject matter without getting bogged down in the details of each language.
+This being said, we will not delve into the specifics of each language, but rather focus on how the different threading libraries relate to each other, as well as highlight some key differences. This is to ensure that we can provide a comprehensive overview of the subject matter without getting bogged down in the details of each language.
 
-Additionally, this study limits its operating system scope to just Linux, as this was the easiest method of collecting data. This is due to linux having a lot of built-in tools and easy-to-install features that allowed for easy programming in all 4 different languages. This is not to say that the results are not applicable in other operating systems, in fact we encourage the reader to run the code snippets on a windows environment to see if the results are similar- However, we will not be able to provide any data on this, as it was not part of the study.
-
-In addition to this, we will also only be talking about x64 architecture, as this is the most common architecture used in modern computers, and the architecture used in both the Intel and AMD processors tat most Windows and Linux machines run on. For the purpose of this study, we will only be looking at Intel processors, as they are the components readily available to us for testing. This is not to say that the results are not applicable to AMD processors, but we will not be able to provide any data on this, as it was not part of the study.
+Additionally, this study limits its scope to just Linux systems, more specifically Ubuntu, as this was the easiest method of collecting data. This is due to linux having a lot of built-in tools and easy-to-install features that allowed for easy programming in all 4 different languages. This is not to say that the theory is not applicable in other operating systems, in fact we encourage the reader to run and the code snippets on other environment to see if the results are similar- However, we will not be able to provide any data on this, as it was not part of the study.
 
 \section{Asynchronous Systems}
 
 To understand multi-core systems effectively, we must first differentiate between synchronous and asynchronous execution paradigms. These concepts form the foundation for how tasks are distributed and managed across multiple processing units.
 
-In traditional single-core processing, operations follow a synchronous model where instructions execute sequentially in a predetermined order \parencite[p. 118]{Johnson2015}. This means that each instruction must complete before the next one begins, creating a linear flow of execution. This model is straightforward and easy to understand, but even on a single-core processor there is still a need the need for running multiple processes at the same time. In addition to this, it's also inefficient to wait for one process to finish entirely before starting the next one, leading to the processor "idling" whilst waiting for I/O operations or resources to become available.
+In traditional single-core processing, operations follow a synchronous model where instructions execute sequentially in a predetermined order \parencite[p. 118]{Johnson2015}. This means that each instruction must complete before the next one begins, creating a linear flow of execution. This model is straightforward and easy to understand, but even on a single-core processor there is still a need the need for running multiple processes at the same time. In addition to this, it's also inefficient to wait for one process to finish entirely before starting the next one, leading to the processor "idling" whilst waiting for I/O operations or resources to become available. This idle time represents a significant performance bottleneck, particularly in I/O-bound applications where the processor spends considerable time waiting for slower peripheral devices to respond.
 
 \begin{quote}
     \textit{\textcolor{darkgray}{"It is much easier to reason sequentially, doing only one thing at a time, than to understand situations where many things occur simultaneously." ... "Thus, while we are “parallel processors”, and we live in a world where multiple things happen at the same time, we usually reason by reduction to a sequential world."}} - \cite{Rajsbaum2020}
@@ -114,7 +112,7 @@ This creates a need for switching the processors attention, or "context switchin
 
 This is often seen by the programmer in the form of subroutines, which in layman's terms are just functions \parencite{Pyeatt2020}, a piece of code that can be called from anywhere in the program. This is a common approach in programming that most, if not all programmers are familiar with, where functions are used to encapsulate a specific piece of functionality and can be called from anywhere in the program, and often multiple times. This allows for code reuse and modularity, making it easier to write and maintain complex programs, but by expanding them to coroutines we can achieve a lot more, namely Concurrency and Asynchronousity. 
 
-Coroutines carry an additional layer of complexity, as they allow for the suspension and resumption of execution at specific points \parencite{DeMouna2009}. This means that a coroutine can "yield" control back to the calling code, before finishing its execution, allowing for more complex interactions between different parts of the program. This is often used in asynchronous programming, where coroutines can be used to handle I/O operations without blocking the main process. 
+Coroutines carry an additional layer of complexity, as they allow for the suspension and resumption of execution at specific points \parencite{DeMouna2009}. This means that a coroutine can "yield" control back to the calling code, before finishing its execution, allowing for more complex interactions between different parts of the program. This is often used in asynchronous programming, where coroutines can be used to handle I/O operations without blocking the main process. Unlike traditional subroutines, coroutines establish a more collaborative relationship where control can pass back and forth between cooperating routines, each maintaining its own state between invocations. This state preservation is a key distinction that makes coroutines particularly valuable for implementing state machines, generators, and cooperative multitasking systems.
 
 Depending on how Coroutines are used, they can be either synchronous or asynchronous. In a synchronous coroutine, the coroutine will yield control back to the calling code, but will not return until it has finished executing. This means that the calling code will wait for the coroutine to finish before continuing. In an asynchronous coroutine, the coroutine will yield control back to the calling code, and will return immediately, allowing the calling code to continue executing.
 
@@ -133,15 +131,42 @@ async def main():
 asyncio.run(main())
 \end{verbatim}
 
-Which defines an asynchronous main function, or a coroutine that will print "Hello World" interspaced by one second. This shows the prominent 'yield' operation. If we gave the function a target to yield to, we would in turn make the code "synchronous" in nature.
+Which defines an asynchronous main function, or a coroutine that will print "Hello World" interspaced by one second. This shows the prominent 'yield' operation. If we gave the function a target to yield to, we would in turn make the code "synchronous" in nature. The 'await' keyword in this example serves as the suspension point, marking where execution can be temporarily halted while waiting for the sleep operation to complete. During this suspension, the Python event loop is free to execute other pending tasks, demonstrating how coroutines enable efficient resource utilization even on single-core systems.
 
-When expanding to multiple processing units on the same chipset (a multi-core processor), we can maintain this synchronous approach for consistency or adopt an asynchronous model that allows processing units to operate with greater independence. 
+When expanding to multiple processing units on the same chipset (a multi-core processor), we can maintain this synchronous approach for consistency or adopt an asynchronous model that allows processing units to operate with greater independence. The choice between these approaches often depends on the nature of the problem being solved, with data-intensive parallel applications favoring synchronous models that emphasize predictable behavior, while I/O-bound or service-oriented applications typically benefit from asynchronous models that maximize throughput by avoiding unnecessary blocking.
 
-In practice, synchronous and asynchronous models are rarely implemented in their purest forms. Even highly parallel systems require synchronization mechanisms to coordinate access to shared resources. For instance, memory access operations must be coordinated when multiple cores need to read from or write to the same memory locations simultaneously. Even when we believe to have written a purely synchronous program, the underlying hardware and operating system may still introduce asynchronous behavior through context switching and resource management because of the need for concurrency.
+\subsection{Parallelism}
+
+In practice, synchronous and asynchronous models are rarely implemented in their purest forms. Even highly parallel systems require synchronization mechanisms to coordinate access to shared resources\parencite[p. 95]{Rauber2023}. For instance, memory access operations must be coordinated when multiple cores need to read from or write to the same memory locations simultaneously. Even when we believe to have written a purely synchronous program, the underlying hardware and operating system may still introduce asynchronous behavior through context switching and resource management because of the need for concurrency.
+
+This is where the concept of "parallelism" comes into play\parencite[pp. 4-5]{Rauber2023}. Parallelism refers to the ability to execute multiple tasks simultaneously, leveraging the capabilities of multiple processors, or cores in our case. It allows for the distribution of workloads across multiple cores, enabling faster execution and improved performance. Whereas concurrency is about managing multiple tasks regardless of whether they execute simultaneously, parallelism specifically focuses on the simultaneous execution of multiple computations. This distinction is critical when designing systems that must scale effectively across multiple processing units.
+
+Within this realm of paralelism, a few important terms are especially valuable for this paper, namely: "Degree of Parallelism" (DOP)\parencite[pp. 11-13]{Rauber2023}, "Load Balancing"\parencite[p. 5]{Rauber2023}, "Idle Time"\parencite[p. 5]{Rauber2023}, and "Parallel Execution Time" (PET)\parencite[p. 5]{Rauber2023}. These concepts are good to note, as they are often used to describe the performance improvements that can be achieved by using multiple cores in a program, or otherwise the reasons for why they are not being achieved.
+
+\textbf{Degree of Parallelism} is a measure of how many tasks can be executed at the same time, and is often used to describe the performance improvements that a parallel system provides. This, in turn, coincides with the concept of "Potential Parallelism", which is the theoretical maximum degree of parallelism that a system can achieve. These two are often used to describe the performance improvements that a parallel system can provide, as well as what it is providing, making them useful means of benchmarking a parallel system's performance.
+
+\textbf{Load Balancing} refers to the standard process of distributing tasks across multiple cores in a parallel system, such that tasks are executed equally across all cores. This is important to ensure that all cores are utilized effectively, and that no single core is overloaded with tasks while others are idle. To this, it is important to note that not all cores are created equal, and that in terms of cpu-architecture we see a lot of variation with "Performance" and "Optional" cores. Performance cores are designed to handle heavy workloads, while optional cores are designed to handle lighter workloads. This means that load balancing is not just about distributing tasks evenly across all cores, but also about ensuring that the right tasks are assigned to the right cores. Even within the same core type we can see a lot of variation in terms of performance, as some cores are designed to handle specific tasks better than others. This is known as "heterogeneous computing", and is an important consideration when designing parallel systems, but as mentioned earlier, in this paper we will only deal with intel x64 architecture.
+
+\textbf{Idle Time} refers to the time a processor cannot do anything useful but wait for more work. This can happen when a processor is waiting for data to be fetched from memory, or when it is waiting for a task to be assigned to it. Idle time is a significant performance bottleneck in parallel systems, as it represents wasted processing power that could be used to execute other tasks.
+
+\textbf{Parallel Execution Time} quantitatively describe the time it takes for a parallel system to execute a given task. This execution time is measured across all functional units, or cores of a system, and can be used to give a tangible measure of the running time of a parallel program. This means that waiting times for memory fetching, writing and plain idle times are included in the measure. In terms of coding with multi-core threading, this means that "scheduling" time is included in the measure as well, as this is the time it takes for the operating system to assign tasks to different cores. This is important to note, as it means that the performance improvements of a parallel system are not just determined by the number of cores, but also by the efficiency of the scheduling algorithm used by the operating system.
+
+Parallelism comes in four "Granularities"\parencite[p. 4]{Rauber2023} which are often referred to as "Levels of Parallelism" \parencite[pp. 114-125]{Rauber2023}. These levels are: Instruction Level Parallelism (ILP), Data Level Parallelism (DLP), Loop Level Parallelism (LLP), and Function Level Parallelism (FLP).
+
+\textbf{Instruction Level Parallelism} refers to the ability of a processor to execute multiple instructions simultaneously. This is achieved by breaking down instructions into smaller micro-operations that can be executed in parallel. ILP is often used in modern processors to improve performance by allowing multiple instructions to be executed at the same time, rather than waiting for each instruction to complete before moving on to the next one.
+
+\textbf{Data Level Parallelism} refers to the ability of a processor to execute multiple operations on different pieces of data simultaneously. This is achieved by using vector instructions or SIMD (Single Instruction, Multiple Data) instructions that allow the processor to perform the same operation on multiple pieces of data at the same time. DLP is often used in applications that require large amounts of data processing, such as image processing or scientific computing.
+
+\textbf{Loop Level Parallelism} refers to the ability of a processor to execute multiple iterations of a loop simultaneously. This is achieved by breaking down the loop into smaller chunks that can be executed in parallel. LLP is often used in applications that require large amounts of data processing, such as image processing or scientific computing. This is often done using techniques such as loop unrolling or loop fusion, which allow the processor to execute multiple iterations of a loop at the same time.
+
+\textbf{Function Level Parallelism} refers to the ability of a processor to execute multiple functions simultaneously. This is achieved by breaking down the functions into smaller chunks that can be executed in parallel. FLP is often used in applications that require large amounts of data processing, such as image processing or scientific computing. This is often done using techniques such as function inlining or function fusion, which allow the processor to execute multiple functions at the same time. This can be related to the concept of Thread Level Parallelism (TLP), which is a measure of the degree of parallelism that can be achieved by using multiple threads in a program, which we will be looking at in the next section.
+
+\subsection{Thread Level Parallelism (TLP)}
+Thread Level Parallelism is a measure of the degree of parallelism that can be achieved by using multiple threads in a program. It is often used to describe the performance improvements that can be achieved by using multiple threads in a program, and is often used in conjunction with other measures such as "Parallel Execution Time" (PET) and "Memory Access Time" (MAT). TLP is often used to describe the performance improvements that can be achieved by using multiple threads in a program, and is often used in conjunction with other measures such as "Parallel Execution Time" (PET) and "Memory Access Time" (MAT).
 
 \section{Threading}
 
-A thread is often described as a lightweight process, as well as the smallest unit of execution within a process \parencite{Rauber2023}. A process often being associated with or connected to having distributed memory\parencite[p. 4, 27]{Rauber2023} as opposed to threads, which are often associated with shared memory. 
+A thread is an abstract definition, often described as a lightweight process, as well as the smallest unit of execution within a process \parencite{Rauber2023}. The description of a thread, in theory, is often held in opposition to a process, which is often being associated with, or connected to having distributed memory\parencite[p. 4, 27]{Rauber2023} as opposed to threads, which are often associated with shared memory. As we will see later, the definitions of threads and processes are more theorhetical than practical, as threads can be implemented in a variety of ways, and can be used to achieve different goals depending on the context in which they are used.
 
 The reason why subroutines and coroutines relate to this topic, is because a thread is in practice a coroutine, and as will be demonstrated later, usually is passed by a function. Threads can be suspended mid-execution and yield to other processes akin to coroutines, such that the processor it runs on always has something to do. Threads are often used to implement parallelism in a program\parencite[p. 27]{Rauber2023}, allowing for multiple tasks to be executed simultaneously. This is an achievment that can be achieved in single-core systems as well, by continuous context switching between different threads\parencite{Rauber2023} we achieve the illusion of multitasking, also known as "Concurrency". Concurrency is the ability of a system to execute multiple tasks simultaneously, even if they are not actually running at the same time, and it extends to multi-core systems as well, which we will be adressing here as well as how to contribute to it by using various threading libraries.
 
@@ -221,7 +246,7 @@ What this code does is create a thread that will run on CPU 0, and then wait for
 
 \subsubsection{Threading in C-Sharp}
 
-C\# just like C, is a compiled language that comes from the C language family like source Python \parencite{PythonFAQ}, however where it differs is its striking resemblance to Java and its use of object oriented programming. To get started with threading in C\#, the process is different from environment to environment. Using the .NET framework for Unix, threads come pre-installed and ready for use by simple instantiating a thread object and passing it a function to run. 
+C\# just like C, is a compiled language that comes from the C language family like source Python \parencite{PythonFAQ}, however where it differs is its striking resemblance to Java and its use of object oriented programming. To get started with threading in C\#, the process is different from environment to environment. Using the .NET framework for Unix, threads come pre-installed and ready for use by simple instantiating a thread object and passing it a function to run:
 
 \begin{verbatim}
 class thread_example {
@@ -241,7 +266,7 @@ Not too dissimilar from how it was carried out in C, we create a function wherei
 
 \subsubsection{Threading in Python}
 
-Threading in python is carried out in a handful of ways, but the most common way is to use the 'threading' library\parencite{PythonThreading}, which comes pre-installed with Python. 
+Threading in python is carried out in a handful of ways, but the most common way is to use the 'threading' library\parencite{PythonThreading}, which comes pre-installed with Python:
 
 \begin{verbatim}
 import threading
@@ -291,74 +316,13 @@ public class Main {
 
 This is slightly different from other languages, as it uses inheritance to create a new thread class that extends the Thread class. This means that the thread objects created from this class will have all its methods and properties included, meaning we don't have to pass a function pointed to the thread object before running it, instead we just call the 'start' method on the thread object. In terms of multi-core threading, Java Virtual Machine (JVM) is able to utilize multiple cores in a program, as they are allotted a pool of Kernel Threads to operate with. For more information on the Java threading library, see the official documentation: \fullcite{JavaThreadClass}.
 
-\section{Parallelism}
+\subsection{Scheduling}
 
-This ability to execute multiple tasks simultaneously with multiple cores is known as "parallelism". In this section we will be looking at notable terms and concepts that are important to understand when working with multi-core systems.
+Schedulers are usually thought of as the operating system's way of managing the execution of threads, and are responsible for determining which threads should be executed at any given time. However, this can further be broken down to user-level schedulers and kernel-level schedulers\parencite[pp. 154-155]{Rauber2023}.
 
-\subsection{Degree of Parallelism}
-
-In the field of parallel systems architecture we often talk about the degree of parallelism a system is capable of. This is a measure of how many tasks can be executed at the same time, and is often used to describe the performance improvements that a parallel system provides.
-
-This, in turn, coincides with the concept of "Potential Parallelism", which is the theoretical maximum degree of parallelism that a system can achieve. This is often used to describe the performance improvements that a parallel system can provide, and is often used as a benchmark for comparing different systems.
-
-\subsection{Thread Level Parallelism (TLP)}
-
-\subsection{Schedulers}
-
-Schedulers are the part of the operating system that is responsible for managing the execution of threads. They are responsible for deciding which thread to execute at any given time, and for managing the resources that are used by each thread. This includes managing the CPU, memory, and other resources that are used by the threads. The scheduler is responsible for ensuring that each thread gets a fair share of the resources, and that no single thread is allowed to monopolize the resources.
-
-Schedulers are often implemented as part of the operating system kernel, and are responsible for managing the execution of all threads in the system. This includes managing the scheduling of threads, as well as managing the resources that are used by each thread. The scheduler is responsible for ensuring that each thread gets a fair share of the resources, and that no single thread is allowed to monopolize the resources.
-
-\subsubsection{OS Schedulers}
+User-level schedulers are implemented in the programming language itself, and are responsible for mapping their own threads to kernel threads for execution. This means that the user-level scheduler is responsible for which of its' threads should be executed at any given time, and what kernel thread they should be mapped to. Kernel-level schedulers, on the other hand, are OS Schedulers that are responsible for managing the execution of kernel threads. They don't have any knowledge of user-level threads, and are only responsible for managing the execution of kernel threads. This means that the kernel-level scheduler is responsible for which kernel threads should be executed at any given time, and more importantly what Processor they should be executed on, dividing up the workload across the available cores in the system.
 
 
-\subsubsection{.NET}
-
-The .NET framework is a software development platform developed by Microsoft. It provides a large library of pre-built functions and classes that can be used to create applications for Windows and other platforms. The .NET framework includes a built-in threading library, which allows for the use of multiple threads in a program, managed by the .NET runtime. This means that the .NET framework is able to utilize multiple cores in a program, but it is not as easy to implement as it is in other languages.
-
-\subsubsection{JVM}
-
-The Java Virtual Machine (JVM) is a software-based execution environment that allows Java programs to run on any platform that has a JVM installed. The JVM is responsible for managing the execution of Java programs, including the creation and management of threads. This means that the JVM is able to utilize multiple cores in a program, but it is not as easy to implement as it is in other languages.
-
-\subsection{Parallel Execution Time (PET)}
-
-In this context of degrees of parallelism, we often use measures such as "Parallel Execution Time" (PET) to quantitatively describe the time it takes for a parallel system to execute a given task. 
-
-This execution time is measured across all functional units, or cores of a system, and can be used to give a tangible measure of the running time of a parallel program. This means that waiting times for memory fetching, writing and plain idle times are included in the measure.
-
-In terms of coding with multi-core threading, this means that "scheduling" time is included in the measure as well, as this is the time it takes for the operating system to assign tasks to different cores. This is important to note, as it means that the performance improvements of a parallel system are not just determined by the number of cores, but also by the efficiency of the scheduling algorithm used by the operating system.
-
-\subsection{Load Balancing}
-
-The term "Load Balancing" refers to the standard process of distributing tasks across multiple cores in a parallel system, such that tasks are executed equally across all cores. This is important to ensure that all cores are utilized effectively, and that no single core is overloaded with tasks while others are idle.
-
-To this, it is important to note that not all cores are created equal, and that in terms of cpu-architecture we see a lot of variation with "Performance" and "Optional" cores. Performance cores are designed to handle heavy workloads, while optional cores are designed to handle lighter workloads. This means that load balancing is not just about distributing tasks evenly across all cores, but also about ensuring that the right tasks are assigned to the right cores. 
-
-Even within the same core type we can see a lot of variation in terms of performance, as some cores are designed to handle specific tasks better than others. This is known as "heterogeneous computing", and is an important consideration when designing parallel systems, but as mentioned earlier, in this paper we will only deal with intel x64 architecture.
-
-\subsection{Idle Time}
-
-The time a processor cannot do anything useful but wait for more work.
-
-\section{Memory}
-
-\subsection{Shared Memory}
-
-Memory organization where the machine shares memory for all threads.
-
-Synchronization plays a heavy role, for example by keeping threads from reading files before another has written to them.
-
-Often connected to the term "Thread".
-
-\subsection{Local Caching}
-
-\subsection{Memory Access Time (MAT)}
-
-Add content if applicable.
-
-\section{Further Reading}
-
-efficiency cores vs performance cores
 
 \section{Data Collection}
 
@@ -366,12 +330,22 @@ efficiency cores vs performance cores
 
 Before we get into the benchmarks of the different programming languages, it is important to disclose that the data was collected on a computer running Ubuntu 24.04.2 LTS with an intel Core i5-4460 CPU @ 3.2GHz, with 4 cores and 4 threads. The time measured was done so with various clocking methods depending on the programming language over the course of 5 runs, with the average time being taken as the final result. The code snippets used for the benchmarks can be found in the appendix.
 
+For each experiment, we made sure to check that all four cores were being utilized by the program using the built in System Monitor in Ubuntu. This was of course done as a separate process, as the System Monitor itself is a program that runs on the same system, and therefore would interfere with the results of the benchmarks. All the numbers were manually recorded and then averaged out to get the final results. 
+
+\subsection{Process}
+
 To begin with, we clocked the time it took to execute a simple count from 1 to 1 billion in the various languages to get a frame of references. This proved especially difficult for Java, as the JIL converts commonly used methods to bytecode to optimize the execution time. This meant that to get a proper benchmark we had to disable the JIT compiler by using the '-Xint' flag, which in turn made the execution time of Java significantly slower than the other languages, with the exception of Python.
+
+This was done by simply looping from 1 to 1 billion using a for loop, recording the time before and after the loop, subtracting the two times to get the time for the execution to finish. This was repeated in each of the languages, proving no troubles until we got to the asynchronous benchmarks.
+
+When it came to the asynchronous benchmark, a lot of things had to be taken into account, as different languages use different methods of threading, as well as multi-core threading. Java was especially different, as common examples shows it instantiating an object of the class inside itself, which was not the case in other languages as seen in the appendix. 
+
+Every threading program followed the same trend, or structure, where we first created a function which was subsequentially sent to a user-thread, then the programming environment and the OS handled the rest "under the hood". This meant that we didn't have to worry about the specifics of how to map the threads ourselves, but it also meant we had no idea how the threads were being scheduled. Neither did we know what cores they were being assigned to, along with how often context switching was happening both between the kernel threads as well as between the user threads. 
 
 \newpage
 \subsection{Results}
 
-As expected, the results of running the code snippets in multiple cores were significant performance increases, as comared to the single core. This makes sense, as evidently four cores are faster than one, however some of these results were quite surprising.
+As expected, most of the time the results of running the code snippets on multiple cores were significant performance increases when compared to the single core. This makes sense, as evidently four cores are faster than one, however some of these results were quite surprising:
 
 \begin{figure}[!htb]
     \centering
@@ -381,9 +355,7 @@ As expected, the results of running the code snippets in multiple cores were sig
     \label{fig:sync-exec-times}
 \end{figure}
 
-
 The synchronous execution results above benchmark the time it took to compute the same task in each of the language. We saw expected results within most of the languages, with python having an average run time of 88 seconds, Java at 33, C\# 4 and C at a little less than 3 seconds. There was not much to note in these results, other than Java operating surprisingly slow when not using the JIT compiler.
-
 
 \begin{figure}[!htb]
     \centering
@@ -393,7 +365,9 @@ The synchronous execution results above benchmark the time it took to compute th
     \label{fig:async-exec-times}
 \end{figure}
 
-The asynchronous execution results reveal a great deal about the efficiency of the different programming when using multiple cores. Python was able to achieve a time of 43 seconds on average which amounts to a little more than twice the performance increase. Java was able to achieve an astounding 8.7 seconds, a little less than 4 times the performance increase.
+The asynchronous execution results reveal a greater deal about the efficiency of the different programming languages however, as there was a big shift. Python was able to achieve a time of 43 seconds on average which amounts to a little more than twice the performance increase. Java was able to achieve an astounding 8.7 seconds, a little less than 4 times the performance increase. C\# was able to achieve an average time of 1.44 seconds, surprassing the performance of C, which was able to achieve an average time of 3.66 seconds, a significant reduction in performance.
+
+When looking at these numbers for C, the first thought is that something must have gone wrong with the multi-core scheduling, as it got slower when utilizing multiple cores, but the System Monitor confirms that all four cores were actually being utilized, so then what could be the reason for this?
 
 \newpage
 \section{Discussion}

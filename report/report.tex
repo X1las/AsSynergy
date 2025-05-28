@@ -159,38 +159,46 @@ Parallelism comes in four "Granularities"\parencite[p. 4]{Rauber2023} which are 
 
 \textbf{Loop Level Parallelism} refers to the ability of a processor to execute multiple iterations of a loop simultaneously. This is achieved by breaking down the loop into smaller chunks that can be executed in parallel. LLP is often used in applications that require large amounts of data processing, such as image processing or scientific computing. This is often done using techniques such as loop unrolling or loop fusion, which allow the processor to execute multiple iterations of a loop at the same time.
 
-\textbf{Function Level Parallelism} refers to the ability of a processor to execute multiple functions simultaneously. This is achieved by breaking down the functions into smaller chunks that can be executed in parallel. FLP is often used in applications that require large amounts of data processing, such as image processing or scientific computing. This is often done using techniques such as function inlining or function fusion, which allow the processor to execute multiple functions at the same time. This can be related to the concept of Thread Level Parallelism (TLP), which is a measure of the degree of parallelism that can be achieved by using multiple threads in a program, which we will be looking at in the next section.
+\textbf{Function Level Parallelism} refers to the ability of a processor to execute multiple functions simultaneously. This is achieved by breaking down the functions into smaller chunks that can be executed in parallel. FLP is often used in applications that require large amounts of data processing, such as image processing or scientific computing. This is often done using techniques such as function inlining or function fusion, which allow the processor to execute multiple functions at the same time. 
 
-\subsection{Thread Level Parallelism (TLP)}
-Thread Level Parallelism is a measure of the degree of parallelism that can be achieved by using multiple threads in a program. It is often used to describe the performance improvements that can be achieved by using multiple threads in a program, and is often used in conjunction with other measures such as "Parallel Execution Time" (PET) and "Memory Access Time" (MAT). TLP is often used to describe the performance improvements that can be achieved by using multiple threads in a program, and is often used in conjunction with other measures such as "Parallel Execution Time" (PET) and "Memory Access Time" (MAT).
+\textbf{Thread Level Parallelism (TLP)}
+Thread Level Parallelism is a measure of parallelism that can be achieved by using multiple threads in a program\parencite{Rauber2023}. It is often used to describe the performance improvements that can be achieved by using multiple threads in a program, and provides a course-grained measure of parallelism compared to the previously mentioned levels. To achieve this level, it is necessary to utilize an abstraction of Threads, which vary in shape and size depending on a lot of factors, such as programming language and operating system.
 
 \section{Threading}
 
-A thread is an abstract definition, often described as a lightweight process, as well as the smallest unit of execution within a process \parencite{Rauber2023}. The description of a thread, in theory, is often held in opposition to a process, which is often being associated with, or connected to having distributed memory\parencite[p. 4, 27]{Rauber2023} as opposed to threads, which are often associated with shared memory. As we will see later, the definitions of threads and processes are more theorhetical than practical, as threads can be implemented in a variety of ways, and can be used to achieve different goals depending on the context in which they are used.
+A thread is an abstract definition, often described as a lightweight process, as well as the smallest unit of execution within a process \parencite{Rauber2023}. 
 
-The reason why subroutines and coroutines relate to this topic, is because a thread is in practice a coroutine, and as will be demonstrated later, usually is passed by a function. Threads can be suspended mid-execution and yield to other processes akin to coroutines, such that the processor it runs on always has something to do. Threads are often used to implement parallelism in a program\parencite[p. 27]{Rauber2023}, allowing for multiple tasks to be executed simultaneously. This is an achievment that can be achieved in single-core systems as well, by continuous context switching between different threads\parencite{Rauber2023} we achieve the illusion of multitasking, also known as "Concurrency". Concurrency is the ability of a system to execute multiple tasks simultaneously, even if they are not actually running at the same time, and it extends to multi-core systems as well, which we will be adressing here as well as how to contribute to it by using various threading libraries.
+To put it in a few words, a thread is a sequence of instructions that can be executed independently of other threads. Threads are held in opposition to processes, which in theory have distributed memory\parencite[p. 4, 27]{Rauber2023} as opposed to threads, which are often associated with shared memory. As we will see later, the definitions of threads and processes are more theoretical than practical, as threads can be implemented in a variety of ways, shapes, and sizes that can be used to achieve different goals depending on the context in which they are used.
+
+The reason why subroutines and coroutines relate to this topic, is because a thread is, in practice, a coroutine, and as will be demonstrated later, are usually created by passing a subroutine as a thread within different languages. Threads can be suspended mid-execution as well as yield to other processes akin to coroutines, such that the processor it runs on always has something to do. Threads are often used to implement parallelism in a program\parencite[p. 27]{Rauber2023}, allowing for multiple tasks to be executed simultaneously. This is an achievment that can be achieved in single-core systems as well, by continuous context switching between different threads\parencite{Rauber2023} we achieve Concurrency. This concurrency does not negate Parallelism, as both can be achieved by context switching between different threads on multiple cores, allowing for a high degree of TLP.
 
 \subsection{Kernel- and User Threads}
 
-Threads are divided into two main categories: "User-threads" and "Kernel-threads" \parencite[p. 27]{Rauber2023}. User threads being the threads closest to the user or programmer, and kernel threads being the threads that are created and managed by the operating system itself.
+Threads are divided into two main categories: "User-threads" and "Kernel-threads" \parencite[p. 27]{Rauber2023}. User-level threads being the threads closest to the user/programmer, and kernel threads being the threads that are created and managed by the operating system itself.
 
 \begin{quote}
     \textit{\textcolor{darkgray}{"The kernel threads are mapped by the operating system to processors or cores for execution. User threads are managed by the specific programming environment used and are mapped to kernel threads for execution. The mapping algorithms as well as the exact number of processors or cores can be hidden from the user by the operating system."}} - \parencite[p. 27]{Rauber2023}
 \end{quote}
 
-These user-threads are managed by the afforementioned libraries particular to the programming languages used, and are mapped to kernel threads for execution. This means that the operating system is responsible for managing the execution of kernel threads, while user threads are managed by the particular programming environment used. This allows for a high degree of flexibility and control over the execution of threads, but it also means that the performance of user threads can be affected by the performance of the kernel threads they are mapped to, as well as the mapping algorithms used by their own programming environment. This is important to note, as it adds additional layers of complexity to measuring the performance of threads, as the affected performance of user threads can vary depending on the operating system and programming environment used.
+These user-threads are managed by the afforementioned programming languages used, and are mapped to kernel threads for execution. This means that the operating system is responsible for managing the execution of kernel threads, while user threads are managed by the particular programming environment used. This allows for a high degree of flexibility and control over the execution of threads, but it also means that the performance of user threads can be affected by the performance of the kernel threads they are mapped to, as well as the mapping algorithms used by their own programming environment. This is important to note, as it adds additional layers of complexity to measuring the performance of threads, as the affected performance of user threads can vary depending on the operating system and programming environment used.
 
-\subsection{Threading in different languages}
+\subsection{Scheduling}
+
+Schedulers are usually thought of as the operating system's way of managing the execution of threads, and are responsible for determining which threads should be executed at any given time. However, this can further be broken down to user-level schedulers and kernel-level schedulers\parencite[pp. 154-155]{Rauber2023}.
+
+User-level schedulers are implemented in the programming language itself, and are responsible for mapping their own threads to kernel threads for execution. This means that the user-level scheduler is responsible for which of its' threads should be executed at any given time, and what kernel thread they should be mapped to. Kernel-level schedulers, on the other hand, are OS Schedulers that are responsible for managing the execution of kernel threads. They don't have any knowledge of user-level threads, and are only responsible for managing the execution of kernel threads. This means that the kernel-level scheduler is responsible for which kernel threads should be executed at any given time, and more importantly what Processor they should be executed on, dividing up the workload across the available cores in the system.
+
+\section{Threading in different languages}
 
 In order to create threads in a program, we often use a threading library that is provided by the programming language. Usually, this is done by creating a function or subroutine that pertains the code to be run independently, using the threading library to pass the function to its own thread. This will become clearer in the following sections, where we will be looking language specific methods of threading in the afforementioned programming languages, starting with the POSIX library, as it relates to C and Python.
 
-\subsubsection{Posix}
+\subsection{Posix}
 
 POSIX, or "Portable Operating System Interface"\parencite{GNUPOSIX,POSIXDocs}, is a set of operating system standards that include features such as a shell, file system, and threading. It is a standard for multi-threading and comes pre-installed with the GCC compiler\parencite{GNUPOSIX} used for this study. POSIX carries a certain level of overhead, as it is not exclusively a threading library, nor is it a library made for C specifically. It is a standard that is implemented in C, but languages such as Python utilize it as well when using the 'multiprocessing' library. When used in this context of multi-threading, it is referred to as 'pthreads', and will be referred to as such in this paper.
 
 Pthreads are essentially user-threads that are created and managed by the POSIX library, but the library itself also allows for the creation of kernel threads. In the context of the programming languages we will be looking at, posix is the only library that offers the ability to create kernel threads directly. For further reading on the POSIX standard, for further reading see \fullcite{Stevens2005} on programming in UNIX environments, as well as \fullcite{Harbour2003} an older article on posix functionality that still holds relevance.
 
-\subsubsection{Threading in C}
+\subsection{Threading in C}
 
 As previously mentioned, in order to accomplish multi-core threading in C we make use of the POSIX library, which comes pre-installed in the GCC compiler used to compile C-code on unix systems. This library provides access to pthreads, which we can easily invoke by including the header file 'pthread.h' in our code:
 
@@ -244,7 +252,7 @@ int main() {
 
 What this code does is create a thread that will run on CPU 0, and then wait for the thread to finish before exiting the program. This is a simple example of how to use pthreads to create a thread in C, but it is important to note that this is not the only way to do it. There are many other functions and options available in the pthreads library that can be used to create and manage threads, such as pthread\_join, pthread\_detach, and pthread\_cancel. These functions allow for more advanced thread management, such as waiting for a thread to finish, detaching a thread from the main process, or canceling a thread that is no longer needed. For further reading on the pthreads library, see the official documentation: \fullcite{PthreadDocs}.
 
-\subsubsection{Threading in C-Sharp}
+\subsection{Threading in C-Sharp}
 
 C\# just like C, is a compiled language that comes from the C language family like source Python \parencite{PythonFAQ}, however where it differs is its striking resemblance to Java and its use of object oriented programming. To get started with threading in C\#, the process is different from environment to environment. Using the .NET framework for Unix, threads come pre-installed and ready for use by simple instantiating a thread object and passing it a function to run:
 
@@ -264,7 +272,7 @@ class thread_example {
 
 Not too dissimilar from how it was carried out in C, we create a function wherein we write the code to be executed in the new thread, and then we create a thread object that takes a function pointer as its argument. This is a simple example of how to use threads in C\#, it includes further functionality that we won't get into depths about in this paper, but further reading can be found in the official documentation: \fullcite{CSThreadClass} as well as this article on its implementation: \fullcite{Wagner2022}. In addition, it is possible to set the CPU affinity of a thread in C\# just like in C, but this is not as straightforward, see this documentation for more information: \parencite{CSProcessorAffinity}.
 
-\subsubsection{Threading in Python}
+\subsection{Threading in Python}
 
 Threading in python is carried out in a handful of ways, but the most common way is to use the 'threading' library\parencite{PythonThreading}, which comes pre-installed with Python:
 
@@ -294,7 +302,7 @@ thread.start()
 
 Despite being labelled as processes, these are still threads as they utilize run on POSIX under the hood\parencite{PythonMultiprocessing}, and are therefore still subject to the same limitations as pthreads. But even so, multi-core threading can be achieved in Python with relative ease, however it's difficult to notice the performance improvements as the GIL is still present\parencite{PythonGIL}. This means that even though we are creating multiple processes, they are still limited by the GIL, and therefore cannot take full advantage of multi-core systems. This is an important consideration when using Python for multi-core threading, as it can lead to performance issues if not handled correctly. For further reading on the threading library, see the official multiprocessing documentation: \fullcite{PythonMultiprocessing}
 
-\subsubsection{Threading in Java}
+\subsection{Threading in Java}
 
 Java Standard Edition (JSE) comes with a built-in threading library\parencite{JavaThreadClass}, usually this functionality is accomplished by inheritance, extending a class from 'Thread' and including a 'run' method that contains the code to be executed in the new thread:
 
@@ -314,25 +322,19 @@ public class Main {
 }
 \end{verbatim}
 
-This is slightly different from other languages, as it uses inheritance to create a new thread class that extends the Thread class. This means that the thread objects created from this class will have all its methods and properties included, meaning we don't have to pass a function pointed to the thread object before running it, instead we just call the 'start' method on the thread object. In terms of multi-core threading, Java Virtual Machine (JVM) is able to utilize multiple cores in a program, as they are allotted a pool of Kernel Threads to operate with. For more information on the Java threading library, see the official documentation: \fullcite{JavaThreadClass}.
+This is slightly different from other languages, as it uses inheritance to create a new thread class that extends the Thread class. This means that the thread objects created from this class will have all its methods and properties included, meaning we don't have to pass a function pointed to the thread object before running it, instead we just call the 'start' method on the thread object. In terms of multi-core threading, Java Virtual Machine (JVM) is able to utilize multiple cores in a program, as they are allotted a pool of Kernel Threads to operate with.
 
-\subsection{Scheduling}
+In addition to these, Java includes 'Virtual Threads' and 'Platform Threads'\parencite{JavaVirtualThreads} in their development kit. Virtual Threads are user threads that are managed by the JVM, and are mapped to platform threads for execution, foregoing being bound to a single kernel thread. Platform Threads are a little more complex, as they are essentially kernel threads but with a java wrapper around them, allowing the JVM to manage them more easily. This means that the JVM is responsible for managing the execution of platform threads, while virtual threads are managed by the JVM itself. This allows for a high degree of flexibility and control over the execution of threads, but it also means that the performance of virtual threads can be affected by the performance of the platform threads they are mapped to, as well as the mapping algorithms used by the JVM.
 
-Schedulers are usually thought of as the operating system's way of managing the execution of threads, and are responsible for determining which threads should be executed at any given time. However, this can further be broken down to user-level schedulers and kernel-level schedulers\parencite[pp. 154-155]{Rauber2023}.
+For more information on the Java threading library, see the official documentation: \fullcite{JavaThreadClass,JavaVirtualThreads}.
 
-User-level schedulers are implemented in the programming language itself, and are responsible for mapping their own threads to kernel threads for execution. This means that the user-level scheduler is responsible for which of its' threads should be executed at any given time, and what kernel thread they should be mapped to. Kernel-level schedulers, on the other hand, are OS Schedulers that are responsible for managing the execution of kernel threads. They don't have any knowledge of user-level threads, and are only responsible for managing the execution of kernel threads. This means that the kernel-level scheduler is responsible for which kernel threads should be executed at any given time, and more importantly what Processor they should be executed on, dividing up the workload across the available cores in the system.
-
-
-
-\section{Data Collection}
-
-\subsection{Experiment Setup}
+\section{Threading Benchmarks}
 
 Before we get into the benchmarks of the different programming languages, it is important to disclose that the data was collected on a computer running Ubuntu 24.04.2 LTS with an intel Core i5-4460 CPU @ 3.2GHz, with 4 cores and 4 threads. The time measured was done so with various clocking methods depending on the programming language over the course of 5 runs, with the average time being taken as the final result. The code snippets used for the benchmarks can be found in the appendix.
 
 For each experiment, we made sure to check that all four cores were being utilized by the program using the built in System Monitor in Ubuntu. This was of course done as a separate process, as the System Monitor itself is a program that runs on the same system, and therefore would interfere with the results of the benchmarks. All the numbers were manually recorded and then averaged out to get the final results. 
 
-\subsection{Process}
+\subsection{Collection Process}
 
 To begin with, we clocked the time it took to execute a simple count from 1 to 1 billion in the various languages to get a frame of references. This proved especially difficult for Java, as the JIL converts commonly used methods to bytecode to optimize the execution time. This meant that to get a proper benchmark we had to disable the JIT compiler by using the '-Xint' flag, which in turn made the execution time of Java significantly slower than the other languages, with the exception of Python.
 
@@ -342,8 +344,7 @@ When it came to the asynchronous benchmark, a lot of things had to be taken into
 
 Every threading program followed the same trend, or structure, where we first created a function which was subsequentially sent to a user-thread, then the programming environment and the OS handled the rest "under the hood". This meant that we didn't have to worry about the specifics of how to map the threads ourselves, but it also meant we had no idea how the threads were being scheduled. Neither did we know what cores they were being assigned to, along with how often context switching was happening both between the kernel threads as well as between the user threads. 
 
-\newpage
-\subsection{Results}
+\subsection{Performance Results}
 
 As expected, most of the time the results of running the code snippets on multiple cores were significant performance increases when compared to the single core. This makes sense, as evidently four cores are faster than one, however some of these results were quite surprising:
 
@@ -367,19 +368,21 @@ The synchronous execution results above benchmark the time it took to compute th
 
 The asynchronous execution results reveal a greater deal about the efficiency of the different programming languages however, as there was a big shift. Python was able to achieve a time of 43 seconds on average which amounts to a little more than twice the performance increase. Java was able to achieve an astounding 8.7 seconds, a little less than 4 times the performance increase. C\# was able to achieve an average time of 1.44 seconds, surprassing the performance of C, which was able to achieve an average time of 3.66 seconds, a significant reduction in performance.
 
-When looking at these numbers for C, the first thought is that something must have gone wrong with the multi-core scheduling, as it got slower when utilizing multiple cores, but the System Monitor confirms that all four cores were actually being utilized, so then what could be the reason for this?
+When looking at these numbers for C, the first thought is that something must have gone wrong with the multi-core scheduling, as it got slower when attempting to run on multiple threads, but the System Monitor confirms that all four cores were actually being fully utilized, so then what could the reason be for this?
 
-\newpage
+By now we have an idea about how threading is implemented in the various languages, and the thing that stands out the most is that C\# and Java both see the same performance increases when multi-threading. This is likely due to both languages having the same approach to threading as well as mapping onto kernel-level threads. Java utilizes the a Wrapper to wrest control of kernel threads, whilst C\# uses something more ambiguous within the .NET scheduler, but the end result is the same. This means that both languages are able to utilize almost the full potential of all the cores available in the system, and therefore we can expect significant performance increases when multi-threading in these specifically. 
+
+
+
 \section{Discussion}
 
 Include thoughts about other programming languages.
 
-\newpage
 \section{Conclusion}
 
 Add content if applicable.
 
-\newpage
+\clearpage
 \section{References}
 \printbibliography
 % Ensure Biber is run to resolve undefined references

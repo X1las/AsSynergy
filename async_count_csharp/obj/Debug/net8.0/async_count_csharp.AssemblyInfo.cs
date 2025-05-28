@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("async_count_csharp")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+7a9a3ab03c0f51e2ff559fc7a136399af2bcf1d1")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+0219f5eed7a4ba182df8f1f12149ffedee47b989")]
 [assembly: System.Reflection.AssemblyProductAttribute("async_count_csharp")]
 [assembly: System.Reflection.AssemblyTitleAttribute("async_count_csharp")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

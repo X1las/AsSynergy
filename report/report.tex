@@ -254,7 +254,7 @@ What this code does is create a thread that will run on CPU 0, and then wait for
 
 \subsection{Threading in C-Sharp}
 
-C\# just like C, is a compiled language that comes from the C language family like source Python \parencite{PythonFAQ}, however where it differs is its striking resemblance to Java and its use of object oriented programming. To get started with threading in C\#, the process is different from environment to environment. Using the .NET framework for Unix, threads come pre-installed and ready for use by simple instantiating a thread object and passing it a function to run:
+C\# just like C, is a compiled language that comes from the C language family like source Python \parencite{PythonFAQ}, however where it differs is its striking resemblance to Java and its use of object oriented programming. To get started with threading in C\#, the process might look somewhat different in other environment, as we will be using the .NET 8 framework for Unix, which comes pre-built with a thread class. This class is ready for use on install, and is easily utilized by instantiating a thread object\parencite{CSThreadClass} and passing it a function to run:
 
 \begin{verbatim}
 class thread_example {
@@ -270,7 +270,9 @@ class thread_example {
 }
 \end{verbatim}
 
-Not too dissimilar from how it was carried out in C, we create a function wherein we write the code to be executed in the new thread, and then we create a thread object that takes a function pointer as its argument. This is a simple example of how to use threads in C\#, it includes further functionality that we won't get into depths about in this paper, but further reading can be found in the official documentation: \fullcite{CSThreadClass} as well as this article on its implementation: \fullcite{Wagner2022}. In addition, it is possible to set the CPU affinity of a thread in C\# just like in C, but this is not as straightforward, see this documentation for more information: \parencite{CSProcessorAffinity}.
+Not too dissimilar from how it was carried out in C, we create a function wherein we write the code to be executed in the new thread, and then we create a thread object that takes a function pointer as its argument. If we look at how C\# threads are scheduled however, we see that it draws a clear distinction between threads and processes\parencite{White2020}. Processes are dedicated spaces of memory within a program, wherein threads are the sole executers of tasks. In regards to the afforementioned "affinity" of threads, C\# extends this by providing not just affinity for the threads themselves, but also an overall process affinity to induce priority of programs. This is done by invoking 'SetPriorityClass' within the code, as well as 'SetThreadPriority' for individual thread priority\parencite{CSThreadPriority}. This allows for a high degree of control over the execution of threads, and gives the programming environment the ability to schedule user-level threads.
+
+This is a simple example of how to use threads in C\#, it includes further functionality that we won't get into depths about in this study, but further reading can be found in the official documentation: \fullcite{CSThreadClass} as well as this article on its implementation: \fullcite{Wagner2022}. In addition, it is possible to set the CPU affinity of a thread in C\# just like in C, but this is not as straightforward, see this documentation for more information: \parencite{CSProcessorAffinity}.
 
 \subsection{Threading in Python}
 
@@ -328,13 +330,13 @@ In addition to these, Java includes 'Virtual Threads' and 'Platform Threads'\par
 
 For more information on the Java threading library, see the official documentation: \fullcite{JavaThreadClass,JavaVirtualThreads}.
 
-\section{Threading Benchmarks}
+\section{Multi-Core Threading Benchmarks}
 
 Before we get into the benchmarks of the different programming languages, it is important to disclose that the data was collected on a computer running Ubuntu 24.04.2 LTS with an intel Core i5-4460 CPU @ 3.2GHz, with 4 cores and 4 threads. The time measured was done so with various clocking methods depending on the programming language over the course of 5 runs, with the average time being taken as the final result. The code snippets used for the benchmarks can be found in the appendix.
 
 For each experiment, we made sure to check that all four cores were being utilized by the program using the built in System Monitor in Ubuntu. This was of course done as a separate process, as the System Monitor itself is a program that runs on the same system, and therefore would interfere with the results of the benchmarks. All the numbers were manually recorded and then averaged out to get the final results. 
 
-\subsection{Collection Process}
+\subsection{Data Collection Process}
 
 To begin with, we clocked the time it took to execute a simple count from 1 to 1 billion in the various languages to get a frame of references. This proved especially difficult for Java, as the JIL converts commonly used methods to bytecode to optimize the execution time. This meant that to get a proper benchmark we had to disable the JIT compiler by using the '-Xint' flag, which in turn made the execution time of Java significantly slower than the other languages, with the exception of Python.
 
@@ -370,17 +372,37 @@ The asynchronous execution results reveal a greater deal about the efficiency of
 
 When looking at these numbers for C, the first thought is that something must have gone wrong with the multi-core scheduling, as it got slower when attempting to run on multiple threads, but the System Monitor confirms that all four cores were actually being fully utilized, so then what could the reason be for this?
 
+\section{Analysis}
+
+When looking at the results, it is important to note that the performance increases are not linear, and that the performance of each language varies significantly. This is likely due to the different ways in which each language implements threading, as well as the different ways in which they handle multi-core systems.
+
 By now we have an idea about how threading is implemented in the various languages, and the thing that stands out the most is that C\# and Java both see the same performance increases when multi-threading. This is likely due to both languages having the same approach to threading as well as mapping onto kernel-level threads. Java utilizes the a Wrapper to wrest control of kernel threads, whilst C\# uses something more ambiguous within the .NET scheduler, but the end result is the same. This means that both languages are able to utilize almost the full potential of all the cores available in the system, and therefore we can expect significant performance increases when multi-threading in these specifically. 
 
+A thing all of these test-cases had in common, was that for each program no more than 4 threads were created. This was done so with a performance mindset in mind, but what it shows us is that every user thread created by the programs were correctly mapped to individual kernel threads as all CPUs were being utilized at a 100\% according to the system monitor. This would indicate that, for at least these small-scale test cases we talk about an N:N scheduling model, where each user thread is mapped to a kernel thread. 
 
+When looking at the different documentation, it becomes evident that we don't have an entire overview, nor control over kernel threads in general. This became evident within the Java Virtual Thread documentation, wherein they mention first and foremost, that they take control of kernel threads with a wrapper, being limited to the amount of kernel threads available. There seems to be a certain reliance on the OS having enough kernel threads at hand or making enough by itself to accomedate the programming environments' needs. 
+
+Having a reliance on kernel threads becomes problematic if we want to achieve a high degree of parallelism, as with less control over how many are created, or when, reduces our ability to create a 1:1 mapping relationship between user and kernel threads. This is evidently already a problem, as we saw Java create Virtual threads for the sole purpose of not being strictly bound to a singular kernel thread, but essentially run their own scheduling algorithm with a limited pool of kernel threads as 'platform threads'. 
+
+This need for user-level scheduling raises the question whether there is an actual need for kernel threads at all, as we are ultimately creating additional overhead by scheduling in multiple places.
+
+As for the performance decrease in C, the fault may lie in a multitude of places. First and foremost, POSIX is a utility for Unix systems, not specifically a library for C, but something that it draws on for a variety of functions. What this could mean for C, is that whenever it draws on any POSIX utility there might be needless overhead, it might not translate well to the C language, or it might not be optimized for the specific use case. This might be especially important compared to Java and C\#, as they both have their own built in threading libraries that map user threads to kernel threads, and therefore have a more direct control over how the threads are scheduled whereas C is relying on POSIX to do this for them.
 
 \section{Discussion}
 
-Include thoughts about other programming languages.
+\subsection{What are Processes and Threads?}
+
+In terms of judging the performance of multi-core threading, it is difficult to conclude on exactly what is getting improved on, as the distinction between what processes or threads are keep differentiating from source to source. \citeauthor{White2020} seems to believe that processes is the outlying group of threads that work in conjunction with each other, something that doesn't run code but contains a main thread as well as many other potential threads that group up to execute the same task. This is in contrast to \citeauthor{Rauber2023} who defines processes as not too dissimilar from threads, only that they execute code with dedicated memory.
+
+This is not 
 
 \section{Conclusion}
 
 Add content if applicable.
+
+\section{Future Work}
+
+
 
 \clearpage
 \section{References}

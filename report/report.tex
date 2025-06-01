@@ -53,7 +53,7 @@
 \newpage
 
 \begin{abstract}
-
+This study investigates the performance characteristics of multi-core threading across four widely used programming languages: C, C\#, Java, and Python. As processor manufacturers shift from increasing clock speeds to adding more cores, the ability to effectively utilize these cores through software becomes increasingly important. We benchmark a simple counting algorithm on a quad-core system using language-specific threading implementations and measure the resulting performance improvements. Our findings reveal significant variations in threading efficiency, with Java achieving near-optimal utilization (382\% improvement), followed by C\# (304\%) and Python (204\%), while C with POSIX threads surprisingly demonstrated a performance decrease (76\% of single-thread speed). These results challenge conventional wisdom about low-level languages offering superior performance for parallel tasks and suggest that the quality of threading implementation is more critical than language abstraction level. The study concludes that while multi-core threading can approach theoretical scaling limits with proper implementation, achieving this potential depends heavily on sophisticated thread management systems that effectively bridge user-level and kernel-level scheduling. These insights help explain the diminishing returns experienced by consumers with high core-count processors and offer guidance for both developers seeking to better leverage parallel computing resources.
 \end{abstract}
 \newpage
 
@@ -146,7 +146,7 @@ In single-core processing, operations follow a synchronous model where instructi
     \textit{\textcolor{darkgray}{"It is much easier to reason sequentially, doing only one thing at a time, than to understand situations where many things occur simultaneously." ... "Thus, while we are "parallel processors", and we live in a world where multiple things happen at the same time, we usually reason by reduction to a sequential world."}} - \cite{Rajsbaum2020}
 \end{quote}
 
-This necessitates "context switching" between tasks, allowing the processor to alternate between different operations, creating the illusion of concurrency \parencite{Rajsbaum2020}. Operating systems manage this through time-slicing, where each process receives a brief execution window.
+This necessitates "context switching"\parencite[p. 4]{Rauber2023} between tasks, allowing the processor to alternate between different operations, creating the illusion of concurrency. Operating systems manage this through time-slicing, where each process receives a brief execution window.
 
 \subsection{Subroutines and Coroutines}
 
@@ -172,15 +172,13 @@ When expanding to multiple processing units on the same chipset (a multi-core pr
 
 \subsection{Parallelism}
 
-In practice, synchronous and asynchronous models are rarely implemented in their purest forms. Even highly parallel systems require synchronization mechanisms to coordinate access to shared resources\parencite[p. 95]{Rauber2023}. For instance, memory access operations must be coordinated when multiple cores need to read from or write to the same memory locations simultaneously. Even when we believe to have written a purely synchronous program, the underlying hardware and operating system may still introduce asynchronous behavior through context switching and resource management because of the need for concurrency.
+In practice, synchronous and asynchronous models rarely exist in their purest forms. Even highly parallel systems require synchronization mechanisms to coordinate access to shared resources\parencite[p. 95]{Rauber2023}. When multiple cores access the same memory locations, these operations must be coordinated, and the underlying hardware and operating system often introduce asynchronous behavior through context switching.
 
-This is where the concept of "parallelism" comes into play\parencite[pp. 4-5]{Rauber2023}. Parallelism refers to the ability to execute multiple tasks simultaneously, leveraging the capabilities of multiple processors, or cores in our case. It allows for the distribution of workloads across multiple cores, enabling faster execution and improved performance. Whereas concurrency is about managing multiple tasks regardless of whether they execute simultaneously, parallelism specifically focuses on the simultaneous execution of multiple computations. This distinction is critical when designing systems that must scale effectively across multiple processing units.
+Parallelism refers to the ability to execute multiple tasks simultaneously across multiple processors or cores\parencite[pp. 4-5]{Rauber2023}. While concurrency is about managing multiple tasks regardless of simultaneous execution, parallelism specifically focuses on the simultaneous execution of multiple computations. This distinction is critical when designing systems that must scale effectively across multiple processing units.
 
 Within this realm of paralelism, a few important terms are especially valuable for this paper, namely: "Degree of Parallelism" (DOP)\parencite[pp. 11-13]{Rauber2023}, "Load Balancing"\parencite[p. 5]{Rauber2023}, "Idle Time"\parencite[p. 5]{Rauber2023}, and "Parallel Execution Time" (PET)\parencite[p. 5]{Rauber2023}. These concepts are good to note, as they are often used to describe the performance improvements that can be achieved by using multiple cores in a program, or otherwise the reasons for why they are not being achieved.
 
 \textbf{Degree of Parallelism} is a measure of how many tasks can be executed at the same time, and is often used to describe the performance improvements that a parallel system provides. This, in turn, coincides with the concept of "Potential Parallelism", which is the theoretical maximum degree of parallelism that a system can achieve. These two are often used to describe the performance improvements that a parallel system can provide, as well as what it is providing, making them useful means of benchmarking a parallel system's performance.
-
-\textbf{Load Balancing} refers to the standard process of distributing tasks across multiple cores in a parallel system, such that tasks are executed equally across all cores. This is important to ensure that all cores are utilized effectively, and that no single core is overloaded with tasks while others are idle. To this, it is important to note that not all cores are created equal, and that in terms of cpu-architecture we see a lot of variation with "Performance" and "Optional" cores. Performance cores are designed to handle heavy workloads, while optional cores are designed to handle lighter workloads. This means that load balancing is not just about distributing tasks evenly across all cores, but also about ensuring that the right tasks are assigned to the right cores. Even within the same core type we can see a lot of variation in terms of performance, as some cores are designed to handle specific tasks better than others. This is known as "heterogeneous computing", and is an important consideration when designing parallel systems, but as mentioned earlier, in this paper we will only deal with intel x64 architecture.
 
 \textbf{Parallel Execution Time} quantitatively describe the time it takes for a parallel system to execute a given task. This execution time is measured across all functional units, or cores of a system, and can be used to give a tangible measure of the running time of a parallel program. This means that waiting times for memory fetching, writing and plain idle times are included in the measure. In terms of coding with multi-core threading, this means that "scheduling" time is included in the measure as well, as this is the time it takes for the operating system to assign tasks to different cores. This is important to note, as it means that the performance improvements of a parallel system are not just determined by the number of cores, but also by the efficiency of the scheduling algorithm used by the operating system.
 
@@ -420,10 +418,10 @@ The multi-core execution results reveal a greater deal about the efficiency of t
         \hline
         Language & Single Core (s) & Multi-Core (s) & Performance Increase (\%) \\
         \hline
-        Python & 88.242 & 43.176 & + 104.377\% \\
-        Java & 33.368 & 8.728 & + 282.310\% \\
-        C\# & 4.407 & 1.449 & + 204.141\% \\
-        C & 2.796 & 3.666 & - 23.732\% \\
+        Python & 88.242 & 43.176 & 204.377\% \\
+        Java & 33.368 & 8.728 & 382.310\% \\
+        C\# & 4.407 & 1.449 & + 304.141\% \\
+        C & 2.796 & 3.666 & 76.268\% \\
         \hline
     \end{tabular}
     \captionsetup{font=small, justification=centering}
@@ -431,7 +429,7 @@ The multi-core execution results reveal a greater deal about the efficiency of t
     \label{tab:exec-times}
 \end{table}
 
-When looking at these numbers for C, the first thought is that something must have gone wrong with the multi-core scheduling, as it got slower when attempting to run on multiple threads, but the System Monitor confirms that all four cores were actually being fully utilized, so then what could the reason be for this?
+When looking at these numbers for C, the first thought is that something must have gone wrong with the multi-core scheduling, as it got slower when attempting to run on multiple threads, but the System Monitor confirms that all four cores were being fully utilized, so then what could the reason be for this?
 
 \section{Analysis}
 
@@ -439,11 +437,11 @@ Looking at the benchmark results, several patterns emerge in how different progr
 
 \subsection{Threading Implementation Efficiency}
 
-Java and C\# demonstrate comparable performance improvement patterns, with both languages achieving substantial speedups when executing on multiple cores. Java achieved an impressive 282.31\% performance increase, while C\# reached a 204.14\% improvement. These gains can be traced to their similar threading architectures, as both languages employ a sophisticated runtime environments (JVM and .NET respectively) that include built-in thread management systems at user-level.
+Java and C\# demonstrate comparable performance improvement patterns, with both languages achieving substantial speedups when executing on multiple cores. Java achieved an impressive 382\% performance increase, while C\# reached a 304\% improvement. These gains can be traced to their similar threading architectures, as both languages employ a sophisticated runtime environments (JVM and .NET respectively) that include built-in thread management systems at user-level.
 
-Python's performance increase of 104.38\% is notable but more modest, likely reflecting the limitations imposed by the Global Interpreter Lock (GIL). Despite using the multiprocessing library to bypass the GIL, Python still shows performance constraints compared to Java and C\#. This aligns with expectations given Python's higher-level abstraction and interpreter-based execution model.
+Python's performance increase of 204\% is notable but more modest, likely reflecting the limitations imposed by the Global Interpreter Lock (GIL). Despite using the multiprocessing library to bypass the GIL, Python still shows performance constraints compared to Java and C\#. This aligns with expectations given Python's higher-level abstraction and interpreter-based execution model.
 
-The surprising finding is C's performance decrease of 23.73\% when using multiple threads. This counter-intuitive result requires further examination, especially considering that the system monitor confirmed all four cores were being utilized. The POSIX threading implementation in C appears to introduce overhead that outweighs the potential benefits of parallel execution for this specific benchmark task.
+The surprising finding is C's performance decrease at 76\% of the single core execution when using multiple threads. This counter-intuitive result requires further examination, especially considering that the system monitor confirmed all four cores were being utilized. The POSIX threading implementation in C appears to introduce overhead that outweighs the potential benefits of parallel execution for this specific benchmark task.
 
 \subsection{Thread-to-Core Mapping}
 
@@ -451,9 +449,13 @@ In all these test cases, we maintained a consistent approach of creating exactly
 
 \subsection{Performance Scaling Analysis}
 
-None of the languages achieved the theoretical maximum of 400\% performance improvement (representing perfect utilization of all four cores). Java came closest with 282.31\%, suggesting that its thread management system is most efficient at utilizing multiple cores for this particular benchmarking task. The non-linear scaling indicates the presence of overhead associated with thread creation, scheduling, and coordination.
+Most notably, Java achieved an impressive 382\% performance improvement, coming remarkably close to the theoretical maximum of 400\% (representing perfect utilization of all four cores). This suggests that Java's thread management system is exceptionally efficient at utilizing multiple cores for this particular benchmark task. C\# also performed admirably with a 304\% improvement, while Python achieved a full doubling with 204\%.
 
-For the simple task of counting numbers used in our benchmark, the degree of parallelism is naturally high since the work can be easily divided among threads with minimal interdependence. This scenario is namely ideal for the simplicity it provides, allowing no shared memory access or synchronization issues, which are common bottlenecks in more complex multi-threaded applications, meaning we get to utilize the most out of multi-core threading. Yet even in this nearly ideal scenario, we observe varying degrees of efficiency in how each language distributes and manages the workload across multiple cores, suggesting that overhead factors of each language's threading model plays a significant role.
+The near-linear scaling observed in Java indicates that its threading implementation has minimal overhead, allowing it to achieve close to perfect parallelism. This is particularly impressive considering the complexity involved in coordinating multiple threads across cores. The fact that Java can reach 95.5\% of the theoretical maximum efficiency suggests that well-designed thread management systems can effectively overcome many of the traditional barriers to parallel performance.
+
+For the simple task of counting numbers used in our benchmark, the degree of parallelism is naturally high since the work can be easily divided among threads with minimal interdependence. This scenario is ideal for testing the raw capability of threading implementations without the complications of shared memory access or synchronization issues. The near-optimal performance of Java demonstrates that under ideal conditions, modern threading implementations can approach theoretical maximum efficiency.
+
+The stark contrast between Java's near-perfect scaling and C's disappointing 76\% relative performance (a 24\% slowdown) highlights how critical the implementation details are to threading performance. Despite all languages utilizing all four cores according to system monitoring, their efficiency in doing so varies dramatically.
 
 \subsection{Overhead Factors}
 
@@ -480,7 +482,9 @@ This stands opposed to the poor performance of C with POSIX threads, challenging
 
 \subsection{User-Level vs. Kernel-Level Thread Management}
 
-Our findings highlight the complex relationship between user-level and kernel-level thread management. The superior performance of Java and C\# suggests their thread management systems effectively bridge the gap between application-level threading needs and kernel-level scheduling. Both languages implement sophisticated user-level scheduling that works harmoniously with the underlying OS scheduler.
+Our findings highlight the complex relationship between user-level and kernel-level thread management. The near-perfect scaling of Java (382\% improvement on a quad-core system) suggests that its thread management system has solved many of the traditional challenges in bridging application-level threading needs with kernel-level scheduling. This remarkable efficiency indicates that Java's sophisticated user-level scheduling works almost seamlessly with the underlying OS scheduler.
+
+The substantial gap between Java's 382\% and C's 76\% performance with the same number of cores and threads strongly suggests that the mapping strategy between user and kernel threads is critical. Java's virtual threads, which intentionally decouple application threading from kernel threading, appear to offer a superior approach. By allowing many lightweight user threads to be divided amongst a smaller pool of kernel threads, this model delivers nearly optimal resource utilization while maintaining programming simplicity.
 
 This raises a fundamental question about the design of threading systems: is the two-level approach (user and kernel) optimal, or does it introduce unnecessary complexity and overhead? Java's virtual threads, which intentionally decouple application threading from kernel threading, represent one approach to addressing this issue. By allowing many lightweight user threads to be divided amongst a smaller pool of kernel threads, this model potentially offers better resource utilization while maintaining programming simplicity.
 
@@ -498,7 +502,7 @@ Returning to our initial hypotheses:
 Our theory and analysis somewhat disagrees with this notion. It was surprisingly easy to apply in practice, as all languages provided a simple way to create threads and run them concurrently across multiple cores right out of the box. In addition to this, the principles of threading were rather straight forward in essence, but it seems quite difficult to figure out how scheduling is carried out, as it varies so much between languages and operating systems. 
 
 \textbf{H2: The performance improvements of multi-core threading do not exceed a doubling in performance.}
-This hypothesis was more or less debunked by our results, as we saw performance improvements at or well over a doubling with most languages, however the performance improvements were not present in all the cases, as of C specifically. In addition these results were not linear with core counts, so it could be there is a ceiling to the performance improvements that can be achieved through multi-core threading, but this is not something we can confirm with our results, so we conclude this as mostly debunked.
+This hypothesis is firmly debunked by our results. Java achieved a 382\% improvement and C\# reached 304\%, both far exceeding a mere doubling of performance. Even Python, with its GIL limitations, managed a 204\% improvement. Only C failed to show positive scaling. These results demonstrate that with proper implementation, multi-threading can approach the theoretical maximum improvement equal to the number of cores.
 
 \textbf{H3: Not all cores are fully utilized in multi-core threading.}
 Our findings debunk this hypothesis entirely, as we saw both significant performance improvements and full utilization of all cores through the system monitor. Despite our initial concerns about not actually seeing any use of more cores than one, we were able to confirm they all were being utilized to their fullest.
@@ -521,35 +525,31 @@ These implications challenge the notion that increasing parallelism through more
 
 \section{Conclusion}
 
-Our investigation into multi-core threading across different programming languages reveals several key insights about the state of parallel computing in contemporary software development.
+Our investigation into multi-core threading across different programming languages reveals several key insights that directly address our research question: "What does multi-core threading offer in terms of performance improvements to different programming languages, and what stops us from utilizing its full potential?"
 
-First, the performance benefits of multi-threading vary significantly between programming languages, with Java and C\# demonstrating superior ability to leverage multiple cores compared to Python and C in our benchmarks. This variation appears linked to how each language implements thread management and coordinates between user-level and kernel-level threading.
+In terms of performance improvements, our benchmarks demonstrate that multi-core threading can offer substantial gains, with Java achieving a remarkable 382\% improvement—nearly reaching the theoretical maximum of 400\% on our quad-core system. C\# followed with 304\%, and even Python managed 204\% despite its GIL limitations. These results convincingly demonstrate that well-implemented threading can approach almost linear scaling with the number of cores. This directly answers our third sub-question regarding performance increases and deficits across languages.
 
-Second, the theoretical performance ceiling of perfect linear scaling with core count remains elusive even for highly parallelizable tasks. The best performance improvement we observed was 282.31\% with Java on a quad-core system, falling short of the theoretical 400\% that perfect scaling would predict. This indicates that overhead in thread management, coordination, and resource sharing remains a significant factor limiting parallel efficiency.
+Addressing our first sub-question about parallel systems, we've shown that a parallel system is one that can execute multiple instructions simultaneously across processing units. Threads serve as the fundamental building blocks of such systems by providing independent execution contexts that share memory space. Our benchmarks confirm that threads effectively enable parallelism, though their implementation efficiency varies significantly by language.
 
-Third, the abstraction level of a programming language does not directly predict its multi-threading performance. C, despite being a lower-level language with potentially closer access to hardware, performed worse in multi-threaded mode than higher-level languages like Java and C\#. This suggests that the design and optimization of threading systems may be more important than language abstraction level for parallel performance.
+For our second sub-question about thread creation in practice, we've demonstrated that while the basic pattern of defining a function and passing it to a threading mechanism is common across languages, implementation details differ considerably. Java uses class inheritance, C\# and Python use function references, and C uses function pointers with specific signatures. Despite these syntactic differences, the underlying concept remains consistent, encapsulating executable code that can run independently. These similarities made our cross-language comparison possible, whilst the differences in implementation quality explained much of the performance variation.
 
-Fourth, the ambiguity in defining and implementing concepts like "threads" and "processes" across different systems creates both theoretical confusion and practical challenges in optimizing parallel performance. More standardized terminology and clearer distinctions between these concepts would benefit both research and practical application.
+What prevents full utilization—addressing our fourth sub-question about challenges appears primarily related to implementation quality rather than fundamental limitations. Java's near-perfect scaling suggests that the theoretical ceiling is attainable with proper design. The stark contrast with C's poor performance (76\% of single-threaded speed) highlights that threading implementation quality is the critical factor in achieving multi-core benefits. Challenges include overhead from thread creation and management, inefficient scheduling algorithms, and suboptimal mapping between user-level and kernel-level threads.
 
-Finally, our findings validate the consumer experience noted in our introduction: simply adding more cores does not automatically translate to proportional performance improvements. The complex interplay between hardware, operating systems, programming languages, and application characteristics creates a nuanced relationship between core count and actual performance gains.
-
-For the field to advance, we need both better tools for understanding and optimizing thread behavior across the software stack and more unified conceptual frameworks for reasoning about parallelism. Without these, the potential of multi-core architectures will remain partially untapped, continuing the trend of diminishing returns from increasing core counts in consumer hardware.
+For the field to advance, we need better standardization of threading models across languages, improved debugging tools for thread visualization, and more transparent control over how threads are scheduled at both user and kernel levels. Without addressing these challenges, the full potential of multi-core architectures will remain partially untapped, continuing the trend of diminishing returns from increasing core counts in consumer hardware.
 
 \section{Future Work}
 
 Future research in this area could productively pursue several directions:
 
-1. **Expanded benchmark diversity**: Testing with workloads that include varying degrees of memory sharing, I/O operations, and computational intensity would provide a more comprehensive understanding of threading performance across different application types.
+\textbf{Scalability at High Core Counts:} Investigating how traditional multi-core threading scales beyond the quad-core level and see how performance changes with commercially available CPUs that range all the way above 64 cores. This could help identify whether the performance ceiling observed in our benchmarks is a fundamental limitation of current threading models or if it can be overcome with more sophisticated scheduling techniques.
 
-2. **Thread optimization techniques**: Investigating specific optimization techniques like work stealing, adaptive thread pooling, and locality-aware scheduling could identify approaches that better utilize multi-core architectures.
+\textbf{Parallel Systems at Instruction Level:} Exploring how parallelism can be achieved at the instruction level, such as through vectorization or SIMD (Single Instruction, Multiple Data) techniques. This could help identify whether there are opportunities to improve performance by optimizing how individual instructions are executed in parallel, rather than relying solely on multi-threading.
 
-3. **Hardware-specific threading models**: Examining how threading performance varies across different CPU architectures (x86, ARM, etc.) and configurations (different core counts, hyper-threading, heterogeneous cores) would provide insight into hardware-software co-optimization opportunities.
+\textbf{Identifying Bottlenecks in E-core and P-core Architectures:} Investigating how different core architectures, such as E-cores (Efficiency cores) and P-cores (Performance cores), impact multi-threading performance. This could help identify whether there are opportunities to optimize thread scheduling and resource allocation based on the specific characteristics of different core types, and whether schedulers already take these into consideration. 
 
-4. **Alternative concurrency models**: Comparing thread-based parallelism with other approaches like actor models, software transactional memory, and data parallelism frameworks could identify more effective paradigms for specific workloads.
+\textbf{Power Efficiency and Thermal Management:} Examine how multi-threading at the higher core counts impacts power consumption and thermal management. As core counts increase, power efficiency might become a critical factor. If multi-threading fully utilizes all computing cores, what can be expected in terms of power consumption and heat generation? This could lead to insights on how the energy grid might be affected in the future, as well as see what can be done to mitigate these effects.
 
-5. **Compiler and runtime optimizations**: Investigating how compiler technologies and runtime systems can better identify and exploit parallelization opportunities automatically would reduce the burden on developers.
-
-6. **Standardization efforts**: Developing more consistent terminology and conceptual frameworks for parallel computing across languages and systems would facilitate both research and practical application.
+\textbf{GPU Core Parallelism:} Investigate how GPU's utilize their high core count to aid in large scale parallel computing tasks, and whether similar techniques can be applied to CPU multi-threading or vice-versa. In addition, looking at how CPUs and GPUs communicate with multiple cores on both ends working independently and whether blocking operations can be avoided or where they appear on both ends.
 
 By addressing these areas, future work could help bridge the gap between theoretical parallel computing potential and practical performance improvements, ultimately enabling software to more effectively utilize the multi-core architectures that now dominate computing hardware.
 

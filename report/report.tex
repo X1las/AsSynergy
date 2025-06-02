@@ -18,7 +18,7 @@
 \usepackage{titling} % For customizing the title page
 
 \title{Asynchronous Synergy: A Study of Performance in Multi-Core Threading Across Programming Languages}
-\author{Jonas Wolffrom}
+\author{Jonas Wolffrom Strandgaard Clausen}
 \date{\today}
 
 % Redefine the \maketitle command to include the logo
@@ -30,9 +30,11 @@
     \includegraphics[width=0.4\textwidth]{ruc_logo.png}\\[2cm]
     
     {\LARGE\bfseries\thetitle\par}
+    
     \vspace{1.5cm}
     
     {\Large\theauthor\par}
+    {\large jwsc@ruc.dk\par}
     \vspace{1cm}
     {\large Supervisor: \par}
     {\large\textit{Henning Christensen}\par}   
@@ -140,7 +142,7 @@ Additionally, this study limits its scope to just Linux systems, more specifical
 
 To understand multi-core systems, we must differentiate between synchronous and asynchronous execution paradigms, which form the foundation for task distribution across processing units.
 
-In single-core processing, operations follow a synchronous model where instructions execute sequentially \parencite[p. 118]{Johnson2015}. While straightforward, this approach leads to processor "idling" when waiting for I/O operations, creating a significant performance bottleneck, especially in I/O-bound applications.
+In single-core processing, operations follow a synchronous model where instructions execute sequentially \parencite[p. 118]{Johnson2015}. While straightforward, this approach leads to processor "idling"\parencite[p. 5]{Rauber2023} when waiting for I/O operations, creating a significant performance bottleneck, especially in I/O-bound applications.
 
 \begin{quote}
     \textit{\textcolor{darkgray}{"It is much easier to reason sequentially, doing only one thing at a time, than to understand situations where many things occur simultaneously." ... "Thus, while we are "parallel processors", and we live in a world where multiple things happen at the same time, we usually reason by reduction to a sequential world."}} - \cite{Rajsbaum2020}
@@ -168,7 +170,7 @@ asyncio.run(main())
 
 The 'await' keyword marks where execution can be temporarily halted while waiting for an operation to complete, allowing other tasks to execute during this suspension.
 
-When expanding to multiple processing units on the same chipset (a multi-core processor), we can maintain this synchronous approach for consistency or adopt an asynchronous model that allows processing units to operate with greater independence. The choice between these approaches often depends on the nature of the problem being solved, with data-intensive parallel applications favoring synchronous models that emphasize predictable behavior, while I/O-bound or service-oriented applications typically benefit from asynchronous models that maximize throughput by avoiding unnecessary blocking.
+When expanding to multiple cores, developers can choose between synchronous models (for predictability) or asynchronous models (for independence). Data-intensive applications typically favor synchronous approaches, while I/O-bound or service-oriented applications benefit from asynchronous models that maximize throughput by avoiding unnecessary blocking.
 
 \subsection{Parallelism}
 
@@ -176,49 +178,47 @@ In practice, synchronous and asynchronous models rarely exist in their purest fo
 
 Parallelism refers to the ability to execute multiple tasks simultaneously across multiple processors or cores\parencite[pp. 4-5]{Rauber2023}. While concurrency is about managing multiple tasks regardless of simultaneous execution, parallelism specifically focuses on the simultaneous execution of multiple computations. This distinction is critical when designing systems that must scale effectively across multiple processing units.
 
-Within this realm of paralelism, a few important terms are especially valuable for this paper, namely: "Degree of Parallelism" (DOP)\parencite[pp. 11-13]{Rauber2023}, "Load Balancing"\parencite[p. 5]{Rauber2023}, "Idle Time"\parencite[p. 5]{Rauber2023}, and "Parallel Execution Time" (PET)\parencite[p. 5]{Rauber2023}. These concepts are good to note, as they are often used to describe the performance improvements that can be achieved by using multiple cores in a program, or otherwise the reasons for why they are not being achieved.
+Within this realm of paralelism, two terms are especially valuable for this paper, namely: "Degree of Parallelism" (DOP), and "Parallel Execution Time" (PET). These concepts are good to note, as they are often used to describe the performance improvements that can be achieved by using multiple cores in a program, or otherwise the reasons for why they are not being achieved.
 
-\textbf{Degree of Parallelism} is a measure of how many tasks can be executed at the same time, and is often used to describe the performance improvements that a parallel system provides. This, in turn, coincides with the concept of "Potential Parallelism", which is the theoretical maximum degree of parallelism that a system can achieve. These two are often used to describe the performance improvements that a parallel system can provide, as well as what it is providing, making them useful means of benchmarking a parallel system's performance.
+\textbf{Degree of Parallelism}\parencite[pp. 11-13]{Rauber2023} is a measure of how many tasks can be executed at the same time, and is often used to describe the performance improvements that a parallel system provides. This, in turn, coincides with the concept of "Potential Parallelism", which is the theoretical maximum degree of parallelism that a system can achieve. These two are often used to describe the performance improvements that a parallel system can provide, as well as what it is providing, making them useful means of benchmarking a parallel system's performance.
 
-\textbf{Parallel Execution Time} quantitatively describe the time it takes for a parallel system to execute a given task. This execution time is measured across all functional units, or cores of a system, and can be used to give a tangible measure of the running time of a parallel program. This means that waiting times for memory fetching, writing and plain idle times are included in the measure. In terms of coding with multi-core threading, this means that "scheduling" time is included in the measure as well, as this is the time it takes for the operating system to assign tasks to different cores. This is important to note, as it means that the performance improvements of a parallel system are not just determined by the number of cores, but also by the efficiency of the scheduling algorithm used by the operating system.
+\textbf{Parallel Execution Time} (PET)\parencite[p. 5]{Rauber2023} measures the total time a parallel system needs to complete a task across all cores. It includes not only computation time but also memory operations, idle periods, and scheduling overhead, along with the time required for the OS to assign tasks to different cores. This comprehensive measure highlights that parallel performance depends not just on core count, but significantly on scheduling efficiency.
 
 Parallelism comes in four "Granularities"\parencite[p. 4, 114]{Rauber2023} which are often referred to as "Levels of Parallelism". These levels are: Instruction Level Parallelism (ILP), Statement Level Parallelism (SLP), Loop Level Parallelism (LLP), and Function Level Parallelism (FLP).
 
 \textbf{Instruction Level Parallelism} refers to the ability of a system to execute multiple processor instructions simultaneously\parencite[pp. 115-116]{Rauber2023}. 'Instructions' refer to the simplest logic or arithmetics that can be executed at the transistor level of the processor. ILP is often used in modern processors to improve performance by allowing multiple instructions to be executed at the same time, breaking down complex operations into small and simple instructions that can be executed in parallel. 
 
-\textbf{Statemwnt Level Parallelism} refers to the ability of a system to execute multiple statements simultaneously\parencite[pp. 114]{Rauber2023}. This granularity is just a bit coarser than ILP, and refers to executing multiple groups of instructions in parallel.
+\textbf{Statement Level Parallelism} refers to the ability of a system to execute multiple statements simultaneously\parencite[pp. 114]{Rauber2023}. This granularity is just a bit coarser than ILP, and refers to executing multiple groups of instructions in parallel.
 
 \textbf{Loop Level Parallelism} refers to the ability of a system to execute multiple iterations of a loop simultaneously\parencite[pp. 118-121]{Rauber2023}. This is achieved by looking at sequential loops, and identifying independent iterations that subsequentially can be executed in parallel. This relates to Data Parallelism\parencite[pp. 116-118]{Rauber2023} as well, as it relies on the ability to execute the same operation on multiple data elements in the same dataset, often as an array. 
 
-\textbf{Function Level Parallelism} refers to the ability of a system to execute multiple tasks simultaneously\parencite[pp. 114, 121-122]{Rauber2023}. This is achieved by identifying subsequent parts of a program that can be executed independently of each other and can be anythin from single statements to functions. This is synonymous with the term "Thread Level Parallelism" (TLP)\parencite[pp. 27-36]{Rauber2023}, which is often used to describe the performance improvements that can be achieved by using multiple threads in a program. However, to achieve TLP, it is necessary to utilize an abstraction of Threads, which vary in shape and size depending on a lot of factors, such as programming language and operating system, which we will look at in the following section.
+\textbf{Function Level Parallelism} involves executing multiple tasks simultaneously by identifying independent program components\parencite[pp. 114, 121-122]{Rauber2023}. This concept is synonymous with "Thread Level Parallelism" (TLP)\parencite[pp. 27-36]{Rauber2023}, which describes performance improvements achieved through multiple threads. Implementing TLP requires thread abstraction, which varies based on programming language and operating system, as explored in the following section.
 
 \section{Threading}
 
-Threads have been addressed varyingly in the literature throughout this paper and the documentation about to be presented especially, but generally speaking, and according to \cite[4, 27]{Rauber2023}, threads can be understood as a sequence of instructions that can be executed independently of other threads. These threads share the same memory space within a process' dedicated memory space, allowing them to communicate and share data with each other without the need for inter-process communication. This shared memory model is what identifies threads from processes, but as we will see later, the definition can be more nuanced.
-
-The reason why subroutines and coroutines relate to this topic, is because a thread is, in practice, a coroutine, and as will be demonstrated later, are usually created by passing a subroutine as a thread within different languages. Threads can be suspended mid-execution as well as yield to other processes akin to coroutines, such that the processor it runs on always has something to do. Multi-threading is an achievment that can be achieved in single-core systems as well, by continuous context switching between different threads\parencite{Rauber2023} we achieve Concurrency. This concurrency does not negate Parallelism, as both can be achieved by context switching between different threads on multiple cores, allowing for a high degree of TLP.
+Threads function as coroutines in practice, typically created by passing subroutines or function as arguments in programming languages. They are small sequences of instructions that, like coroutines, can be suspended mid-execution and yield to other processes. Multi-threading works even on single-core systems through context switching\parencite{Rauber2023}, creating concurrency. When implemented on multi-core systems, this concurrency complements parallelism, enabling effective TLP, changing the context to multi-core threading. Multi-core threading allows processors to maintain activity by switching between different execution contexts, maximizing resource utilization across available cores in an asynchronous manner, working in opposition to the normal way of thinking program execution\parencite{Rajsbaum2020}.
 
 \subsection{Kernel- and User Threads}
 
-Threads are divided into two main categories: "User-threads" and "Kernel-threads" \parencite[p. 27]{Rauber2023}. User-level threads being the threads closest to the user/programmer, and kernel threads being the threads that are created and managed by the operating system itself.
+Threads are divided into two main categories: "User-level" and "Kernel-level" threads\parencite[p. 27]{Rauber2023}. User-level threads being the threads closest to the programmer, and kernel threads being the threads that are created and managed by the operating system itself.
 
 \begin{quote}
     \textit{\textcolor{darkgray}{"The kernel threads are mapped by the operating system to processors or cores for execution. User threads are managed by the specific programming environment used and are mapped to kernel threads for execution. The mapping algorithms as well as the exact number of processors or cores can be hidden from the user by the operating system."}} - \parencite[p. 27]{Rauber2023}
 \end{quote}
 
-These user-threads are managed by the afforementioned programming languages used, and are mapped to kernel threads for execution. This means that the operating system is responsible for managing the execution of kernel threads, while user threads are managed by the particular programming environment used. This allows for a high degree of flexibility and control over the execution of threads, but it also means that the performance of user threads can be affected by the performance of the kernel threads they are mapped to, as well as the mapping algorithms used by their own programming environment. This is important to note, as it adds additional layers of complexity to measuring the performance of threads, as the affected performance of user threads can vary depending on the operating system and programming environment used.
+User-level threads are managed by programming environments and mapped to kernel-level threads that the operating system schedules onto physical cores. This relationship creates a two-fold scheduling system where user-thread performance depends on both the programming environment's thread management and the kernel's scheduling algorithms. This additional complexity means thread performance can vary significantly across different programming language implementations as well as operating systems, complicating performance measurement and optimization efforts.
 
 \subsection{Scheduling}
 
 Schedulers are usually thought of as the operating system's way of managing the execution of threads, and are responsible for determining which threads should be executed at any given time. However, this can further be broken down to user-level schedulers and kernel-level schedulers\parencite[pp. 154-155]{Rauber2023}.
 
-User-level schedulers are implemented in the programming language itself, and are responsible for mapping their own threads to kernel threads for execution. This means that the user-level scheduler is responsible for which of its' threads should be executed at any given time, and what kernel thread they should be mapped to. Kernel-level schedulers, on the other hand, are OS Schedulers that are responsible for managing the execution of kernel threads\parencite[pp. 155-156]{Rauber2023}. They don't have any knowledge of user-level threads, and are only responsible for managing the execution of kernel threads. This means that the kernel-level scheduler is responsible for which kernel threads should be executed at any given time, and more importantly what Processor they should be executed on, dividing up the workload across the available cores in the system. 
+User-level schedulers exist within programming environments and map language-specific threads to kernel threads, determining which should execute and when. Kernel-level schedulers, implemented in the operating system, have no knowledge of user-level threads and are solely responsible for mapping kernel threads to physical processors, distributing workload across available cores\parencite[pp. 155-156]{Rauber2023}. This creates a two-level scheduling hierarchy where performance depends on both systems working efficiently together.
 
-The way that these schedulers map can be divided into several categories as defined by \citeauthor[pp. 155-156]{Rauber2023}:
+The way that the user-level schedulers map onto the kernel threads can be divided into several categories as defined by \citeauthor[pp. 155-156]{Rauber2023}:
 
-\textbf{N:1 Mapping} or 'Many to One' mapping is the simplest form of mapping, where multiple user threads are mapped to a single kernel thread. This means that the programming environment's thread user-level scheduler is responisble of managing the execution of multiple user threads, and that the kernel-level scheduler is responsible for managing the execution of a single kernel thread.
+\textbf{N:1 Mapping} or 'Many to One' mapping is the simplest form of mapping, where multiple user threads are mapped to a single kernel thread. This means that the programming environment's scheduler is responisble for managing the execution of multiple user threads, and that the kernel-level scheduler is responsible for managing the execution of a single kernel thread.
 
-\textbf{1:1 Mapping} or 'One to One' mapping is the more complex form of mapping, where each user thread is mapped to a single kernel thread. This means that the programming environment's thread scheduler is not responsible for managing the execution of multiple user threads, leaving that to the kernel-level scheduler.
+\textbf{1:1 Mapping} or 'One to One' mapping is the more complex form of mapping, where each user thread is mapped to its own kernel thread. This means that the programming environment's thread scheduler is not responsible for managing the execution of multiple user threads, leaving that to the kernel-level scheduler.
 
 \textbf{N:M Mapping} or 'Many to Many' mapping is a hybrid approach that combines the two previous approaches, wherein multiple user-level threads can be mapped to a selection of kernel-level threads. This means that both the programming environment's thread scheduler and the kernel-level scheduler are responsible for the managing and execution of multiple user threads, allowing for a high degree of flexibility and control over the whole process at user-level. This is often used in systems that require a high degree of parallelism, as it allows for multiple user threads to be executed simultaneously on different kernel threads.
 
@@ -228,7 +228,7 @@ In order to create threads in a program, we often use a threading library that i
 
 \subsection{Posix}
 
-POSIX, or "Portable Operating System Interface"\parencite{GNUPOSIX,POSIXDocs}, is a set of operating system standards that include features such as a shell, file system, and threading. It is a standard for multi-threading and comes pre-installed with the GCC compiler\parencite{GNUPOSIX} used for this study. POSIX carries a certain level of overhead, as it is not exclusively a threading library, nor is it a library made for C specifically. It is a standard that is implemented in C, but languages such as Python utilize it as well when using the 'multiprocessing' library. When used in this context of multi-threading, it is referred to as 'pthreads', and will be referred to as such in this paper.
+POSIX (Portable Operating System Interface)\parencite{GNUPOSIX,POSIXDocs} is a set of operating system standards that includes threading capabilities. It comes pre-installed with the GCC compiler\parencite{GNUPOSIX} and, despite not being exclusively a threading library or C-specific, is utilized by other languages like Python in its 'multiprocessing' library. In the context of multi-threading, POSIX is referred to as 'pthreads', which is how it will be referenced throughout this paper.
 
 Pthreads are essentially user-threads that are created and managed by the POSIX scheduler, this scheduler is responsible for mapping user-level threads to kernel-level threads for execution. In C, scheduling priority and policies can be changed to one of three as per \cite[pp. 359-360]{Rauber2023}:
 
@@ -291,8 +291,7 @@ int main() {
     return 0;
 }
 \end{verbatim}
-
-What this code does is create a thread that will run on CPU 0, and then wait for the thread to finish before exiting the program. This is a simple example of how to use pthreads to create a thread in C, but it is important to note that this is not the only way to do it. There are many other functions and options available in the pthreads library that can be used to create and manage threads, such as pthread\_join, pthread\_detach, and pthread\_cancel. These functions allow for more advanced thread management, such as waiting for a thread to finish, detaching a thread from the main process, or canceling a thread that is no longer needed. For further reading on the pthreads library, see the official documentation: \fullcite{PthreadDocs}.
+This code demonstrates creating a thread limited to CPU 0 using CPU affinity settings. The pthreads library offers additional thread management functions like pthread\_join (waiting for completion), pthread\_detach (separating from the main process), and pthread\_cancel (terminating threads). For comprehensive details, see the official documentation: \fullcite{PthreadDocs}.
 
 \subsection{Threading in C-Sharp}
 
@@ -312,9 +311,9 @@ class thread_example {
 }
 \end{verbatim}
 
-Not too dissimilar from how it was carried out in C, we create a function wherein we write the code to be executed in the new thread, and then we create a thread object that takes a function pointer as its argument. If we look at how C\# threads are scheduled however, we see that it draws a clear distinction between threads and processes\parencite{White2020}. Processes are dedicated spaces of memory within a program, wherein threads are the sole executers of tasks. In regards to the afforementioned "affinity" of threads, C\# extends this by providing not just affinity for the threads themselves, but also an overall process affinity to induce priority of programs. This is done by invoking 'SetPriorityClass' within the code, as well as 'SetThreadPriority' for individual thread priority\parencite{CSThreadPriority}. This allows for a high degree of control over the execution of threads, and gives the programming environment the ability to schedule user-level threads.
+Similar to C, C\# threading involves creating a function to execute in the thread and passing it as a function pointer. C\# makes a clear distinction between processes (dedicated memory spaces) and threads (task executors)\parencite{White2020}. Beyond thread affinity, C\# provides enhanced control through process affinity with 'SetPriorityClass' and individual thread priority via 'SetThreadPriority'\parencite{CSThreadPriority}. This multilevel control gives the programming environment significant flexibility in scheduling user-level threads.
 
-This is a simple example of how to use threads in C\#, it includes further functionality that we won't get into depths about in this study, but further reading can be found in the official documentation: \fullcite{CSThreadClass} as well as this article on its implementation: \fullcite{Wagner2022}. In addition, it is possible to set the CPU affinity of a thread in C\# just like in C, but this is not as straightforward, see this documentation for more information: \parencite{CSProcessorAffinity}.
+C\# provides additional threading functionality beyond this basic example. For comprehensive details, see the official documentation \fullcite{CSThreadClass} and implementation guide \fullcite{Wagner2022}. Similar to C, C\# supports CPU affinity settings, though with different implementation approaches \parencite{CSProcessorAffinity}.
 
 \subsection{Threading in Python}
 
@@ -344,7 +343,7 @@ thread = multiprocessing.Process(target=my_process_function)
 thread.start()
 \end{verbatim}
 
-Despite being labelled as processes, these are still threads as they utilize run on POSIX under the hood\parencite{PythonMultiprocessing}, and are therefore still subject to the same limitations as pthreads. But even so, multi-core threading can be achieved in Python with relative ease, however it's difficult to notice the performance improvements as the GIL is still present\parencite{PythonGIL}. This means that even though we are creating multiple processes, they are still limited by the GIL, and therefore cannot take full advantage of multi-core systems. This is an important consideration when using Python for multi-core threading, as it can lead to performance issues if not handled correctly. For further reading on the threading library, see the official multiprocessing documentation: \fullcite{PythonMultiprocessing}
+Despite being labeled as processes, these are actually threads utilizing POSIX under the hood\parencite{PythonMultiprocessing} and subject to the same limitations as pthreads. While multi-core threading is easily achieved in Python, the Global Interpreter Lock (GIL) significantly constrains performance improvements\parencite{PythonGIL}. Even when creating multiple processes, the GIL limits their ability to fully leverage multi-core systems—an important consideration when implementing parallel processing in Python. For further details, see: \fullcite{PythonMultiprocessing}
 
 \subsection{Threading in Java}
 
@@ -366,9 +365,9 @@ public class Main {
 }
 \end{verbatim}
 
-This is slightly different from other languages, as it uses inheritance to create a new thread class that extends the Thread class. This means that the thread objects created from this class will have all its methods and properties included, meaning we don't have to pass a function pointed to the thread object before running it, instead we just call the 'start' method on the thread object. In terms of multi-core threading, Java Virtual Machine (JVM) is able to utilize multiple cores in a program, as they are allotted a pool of Kernel Threads to operate with.
+Java also offers 'Virtual Threads' and 'Platform Threads'\parencite{JavaVirtualThreads}. Virtual Threads are managed by the JVM and mapped to platform threads, without being bound to a single kernel thread. Platform Threads are essentially kernel threads with a Java wrapper, allowing easier JVM management. This architecture provides flexibility in thread execution, though virtual thread performance depends on both the platform threads they map to and the JVM's mapping algorithms.
 
-In addition to these, Java includes 'Virtual Threads' and 'Platform Threads'\parencite{JavaVirtualThreads} in their development kit. Virtual Threads are user threads that are managed by the JVM, and are mapped to platform threads for execution, foregoing being bound to a single kernel thread. Platform Threads are a little more complex, as they are essentially kernel threads but with a java wrapper around them, allowing the JVM to manage them more easily. This means that the JVM is responsible for managing the execution of platform threads, while virtual threads are managed by the JVM itself. This allows for a high degree of flexibility and control over the execution of threads, but it also means that the performance of virtual threads can be affected by the performance of the platform threads they are mapped to, as well as the mapping algorithms used by the JVM.
+Java also offers 'Virtual Threads' and 'Platform Threads'\parencite{JavaVirtualThreads}. Virtual Threads are managed by the JVM and mapped to platform threads, without being bound to a single kernel thread. Platform Threads are essentially kernel threads with a Java wrapper, allowing easier JVM management. This architecture provides flexibility in thread execution, though virtual thread performance depends on both the platform threads they map to and the JVM's mapping algorithms.
 
 For more information on the Java threading library, see the official documentation: \fullcite{JavaThreadClass,JavaVirtualThreads}.
 
@@ -380,13 +379,11 @@ For each experiment, we made sure to check that all four cores were being utiliz
 
 \subsection{Data Collection Process}
 
-To begin with, we clocked the time it took to execute a simple count from 1 to 1 billion in the various languages to get a frame of references. This proved especially difficult for Java, as the JIL converts commonly used methods to bytecode to optimize the execution time. This meant that to get a proper benchmark we had to disable the JIT compiler by using the '-Xint' flag, which in turn made the execution time of Java significantly slower than the other languages, with the exception of Python.
+We benchmarked execution time by counting from 1 to 1 billion across all languages. For Java, we disabled JIT optimization using the '-Xint' flag to ensure consistent measurements, though this significantly increased execution time compared to other languages except Python.
 
-This was done by simply looping from 1 to 1 billion using a for loop, recording the time before and after the loop, subtracting the two times to get the time for the execution to finish. This was repeated in each of the languages, proving no troubles until we got to the asynchronous benchmarks.
+The synchronous benchmark used a simple for-loop with time measurements before and after execution. For asynchronous benchmarks, we had to account for language-specific threading implementations. Despite these differences, all threading implementations followed a similar pattern: creating a function to be executed and passing it to a thread manager.
 
-When it came to the asynchronous benchmark, a lot of things had to be taken into account, as different languages use different methods of threading, as well as multi-core threading. Java was especially different, as common examples shows it instantiating an object of the class inside itself, which was not the case in other languages as seen in the appendix. 
-
-Every threading program followed the same trend/structure, where we first created a function which was subsequentially sent to a user-thread, then the programming environment and the OS handled the rest "under the hood". This meant that we didn't have to worry about the specifics of how to map the threads ourselves, but it also meant we had no idea how the threads were being scheduled. Neither did we know what cores they were being assigned to, along with how often context switching was happening both between the kernel threads as well as between the user threads. 
+Throughout testing, thread scheduling, core assignment, and context switching happened "under the hood" without direct programmer control. The OS and language runtime environments handled these aspects automatically, making it impossible to observe exactly how threads were being scheduled or mapped to physical cores.
 
 \subsection{Performance Results}
 
@@ -525,7 +522,7 @@ These implications challenge the notion that increasing parallelism through more
 
 \section{Conclusion}
 
-Our investigation into multi-core threading across different programming languages reveals several key insights that directly address our research question: "What does multi-core threading offer in terms of performance improvements to different programming languages, and what stops us from utilizing its full potential?"
+Our investigation into multi-core threading across different programming languages revealed several key insights that directly addressed our research question: "What does multi-core threading offer in terms of performance improvements to different programming languages, and what stops us from utilizing its full potential?"
 
 In terms of performance improvements, our benchmarks demonstrate that multi-core threading can offer substantial gains, with Java achieving a remarkable 382\% improvement—nearly reaching the theoretical maximum of 400\% on our quad-core system. C\# followed with 304\%, and even Python managed 204\% despite its GIL limitations. These results convincingly demonstrate that well-implemented threading can approach almost linear scaling with the number of cores. This directly answers our third sub-question regarding performance increases and deficits across languages.
 
@@ -539,13 +536,13 @@ For the field to advance, we need better standardization of threading models acr
 
 \section{Future Work}
 
-Future research in this area could productively pursue several directions:
+Future research in this area could easily pursue several different directions:
 
 \textbf{Scalability at High Core Counts:} Investigating how traditional multi-core threading scales beyond the quad-core level and see how performance changes with commercially available CPUs that range all the way above 64 cores. This could help identify whether the performance ceiling observed in our benchmarks is a fundamental limitation of current threading models or if it can be overcome with more sophisticated scheduling techniques.
 
 \textbf{Parallel Systems at Instruction Level:} Exploring how parallelism can be achieved at the instruction level, such as through vectorization or SIMD (Single Instruction, Multiple Data) techniques. This could help identify whether there are opportunities to improve performance by optimizing how individual instructions are executed in parallel, rather than relying solely on multi-threading.
 
-\textbf{Identifying Bottlenecks in E-core and P-core Architectures:} Investigating how different core architectures, such as E-cores (Efficiency cores) and P-cores (Performance cores), impact multi-threading performance. This could help identify whether there are opportunities to optimize thread scheduling and resource allocation based on the specific characteristics of different core types, and whether schedulers already take these into consideration. 
+\textbf{Bottlenecks in E-core and P-core Architectures:} Investigating how different core architectures, such as E-cores (Efficiency cores) and P-cores (Performance cores), impact multi-threading performance. This could help identify whether there are opportunities to optimize thread scheduling and resource allocation based on the specific characteristics of different core types, and whether schedulers already take these into consideration. 
 
 \textbf{Power Efficiency and Thermal Management:} Examine how multi-threading at the higher core counts impacts power consumption and thermal management. As core counts increase, power efficiency might become a critical factor. If multi-threading fully utilizes all computing cores, what can be expected in terms of power consumption and heat generation? This could lead to insights on how the energy grid might be affected in the future, as well as see what can be done to mitigate these effects.
 

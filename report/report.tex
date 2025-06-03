@@ -196,7 +196,7 @@ Parallelism comes in four "Granularities"\parencite[p. 4, 114]{Rauber2023} which
 
 \section{Threading}
 
-Threads function as coroutines in practice, typically created by passing subroutines or function as arguments in programming languages. They are small sequences of instructions that, like coroutines, can be suspended mid-execution and yield to other processes. Multi-threading works even on single-core systems through context switching\parencite{Rauber2023}, creating concurrency. When implemented on multi-core systems, this concurrency complements parallelism, enabling effective TLP, changing the context to multi-core threading. Multi-core threading allows processors to maintain activity by switching between different execution contexts, maximizing resource utilization across available cores in an asynchronous manner, working in opposition to the normal way of thinking program execution\parencite{Rajsbaum2020}.
+Threads function as coroutines in practice, typically created by passing subroutines or function as arguments in programming languages. They are small sequences of instructions that, like coroutines, can be suspended mid-execution and yield to other processes. Threads have shared memory space as opposed to Processes\parencite[p. 4]{Rauber2023} and multi-threading works even on single-core systems through context switching\parencite{Rauber2023}, creating concurrency. When implemented on multi-core systems, this concurrency complements parallelism, enabling effective TLP, changing the context to multi-core threading. Multi-core threading allows processors to maintain activity by switching between different execution contexts, maximizing resource utilization across available cores in an asynchronous manner, working in opposition to the normal way of thinking program execution\parencite{Rajsbaum2020}.
 
 \subsection{Kernel- and User Threads}
 
@@ -224,11 +224,11 @@ The way that the user-level schedulers map onto the kernel threads can be divide
 
 \section{Threading in different languages}
 
-In order to create threads in a program, we often use a threading library that is provided by the programming language. Usually, this is done by creating a function or subroutine that pertains the code to be run independently, using the threading library to pass the function to its own thread. This will become clearer in the following sections, where we will be looking language specific methods of threading in the afforementioned programming languages, starting with the POSIX library, as it relates to both C and Python.
+In order to create threads in a program, we often use a threading library that is provided by the programming language. Usually, this is done by creating a function or subroutine that pertains the code to be run independently, using the threading library to pass the function to its own thread. This will become clearer in the following sections, where we will be looking at the language specific methods of threading, starting with POSIX, as it relates to both C and Python.
 
 \subsection{Posix}
 
-POSIX (Portable Operating System Interface)\parencite{GNUPOSIX,POSIXDocs} is a set of operating system standards that includes threading capabilities. It comes pre-installed with the GCC compiler\parencite{GNUPOSIX} and, despite not being exclusively a threading library or C-specific, is utilized by other languages like Python in its 'multiprocessing' library. In the context of multi-threading, POSIX is referred to as 'pthreads', which is how it will be referenced throughout this paper.
+POSIX (Portable Operating System Interface)\parencite{GNUPOSIX,POSIXDocs} is a set of operating system standards that includes threading capabilities. It comes pre-installed with GCC (GNU Compiler Collection)\parencite{GNUPOSIX} and, despite not being exclusively a threading library or C-specific, is utilized by other languages like Python in its 'multiprocessing' library. In the context of multi-threading, POSIX threads are referred to as 'pthreads', which is how it will be referenced throughout this paper.
 
 Pthreads are essentially user-threads that are created and managed by the POSIX scheduler, this scheduler is responsible for mapping user-level threads to kernel-level threads for execution. In C, scheduling priority and policies can be changed to one of three as per \cite[pp. 359-360]{Rauber2023}:
 
@@ -242,13 +242,13 @@ For further reading on the POSIX standard, for further reading see \fullcite{Ste
 
 \subsection{Threading in C}
 
-As previously mentioned, in order to accomplish multi-core threading in C we make use of the POSIX library, which comes pre-installed in the GCC compiler used to compile C-code on unix systems. This library provides access to pthreads, which we can easily invoke by including the header file 'pthread.h' in our code:
+As previously mentioned, in order to accomplish multi-core threading in C, we make use of the POSIX library which comes pre-installed with the GCC C compiler used on unix systems. This library provides access to pthreads, which we can easily invoke by including the header file 'pthread.h' in our code:
 
 \begin{verbatim}
 #include <pthread.h>
 \end{verbatim}
 
-After this, we can create a thread by first making a pthread variable to pass on to the pthread\_create function, which takes a function pointer as its first argument. This function pointer is the function that will be executed in the new thread, and it must have a specific signature in order to be used with pthreads. The signature is as follows:
+After this, we can create a thread by first making a pthread variable to pass on to the pthread\_create function, which takes a function pointer as its first argument. This function pointer is the function that will be executed in the new thread, and it must have a specific signature in order to be used with pthreads:
 
 \begin{verbatim}
 void *function_name(void *arg) {
@@ -291,11 +291,12 @@ int main() {
     return 0;
 }
 \end{verbatim}
-This code demonstrates creating a thread limited to CPU 0 using CPU affinity settings. The pthreads library offers additional thread management functions like pthread\_join (waiting for completion), pthread\_detach (separating from the main process), and pthread\_cancel (terminating threads). For comprehensive details, see the official documentation: \fullcite{PthreadDocs}.
+
+This code demonstrates creating a thread on the primary core using CPU affinity settings. The pthreads library offers additional thread management functions like pthread\_join (waiting for completion), pthread\_detach (separating from the main process), and pthread\_cancel (terminating threads). For comprehensive details, see the official documentation: \fullcite{PthreadDocs}.
 
 \subsection{Threading in C-Sharp}
 
-C\# just like C, is a compiled language that comes from the C language family like Python \parencite{PythonFAQ}, however where it differs is its striking resemblance to Java and its use of object oriented programming. To get started with threading in C\#, the process might look somewhat different in other environment, as we will be using the .NET 8 framework for Unix, which comes pre-built with a thread class. This class is ready for use on install, and is easily utilized by instantiating a thread object\parencite{CSThreadClass} and passing it a function to run:
+C\# just like C, is a compiled language that comes from the C language family like Python \parencite{PythonFAQ}, however where it differs is its striking resemblance to Java and its use of object oriented programming. To get started with threading in C\#, we will be using the .NET 8 framework for Unix which comes pre-built with a thread class. This class is ready for use on install, and is easily utilized by instantiating a thread object\parencite{CSThreadClass} and passing it a function to run:
 
 \begin{verbatim}
 class thread_example {
@@ -311,9 +312,9 @@ class thread_example {
 }
 \end{verbatim}
 
-Similar to C, C\# threading involves creating a function to execute in the thread and passing it as a function pointer. C\# makes a clear distinction between processes (dedicated memory spaces) and threads (task executors)\parencite{White2020}. Beyond thread affinity, C\# provides enhanced control through process affinity with 'SetPriorityClass' and individual thread priority via 'SetThreadPriority'\parencite{CSThreadPriority}. This multilevel control gives the programming environment significant flexibility in scheduling user-level threads.
+Similar to C, C\# threading involves creating a function to execute in the thread and passing it as a function pointer. C\# makes a clear distinction between processes (dedicated memory spaces) and threads (task executors)\parencite{White2020}, as beyond thread affinity, C\# provides enhanced control through process affinity with 'SetPriorityClass' and individual thread priority via 'SetThreadPriority'\parencite{CSThreadPriority}. This multilevel control gives the programming environment significant flexibility in scheduling user-level threads.
 
-C\# provides additional threading functionality beyond this basic example. For comprehensive details, see the official documentation \fullcite{CSThreadClass} and implementation guide \fullcite{Wagner2022}. Similar to C, C\# supports CPU affinity settings, though with different implementation approaches \parencite{CSProcessorAffinity}.
+C\# provides additional threading functionality beyond this basic example. For comprehensive details, see the official documentation \fullcite{CSThreadClass} and the implementation guide \fullcite{Wagner2022}.
 
 \subsection{Threading in Python}
 
@@ -330,7 +331,7 @@ thread = threading.Thread(target=my_thread_function)
 thread.start()
 \end{verbatim}
 
-This is again a simple example of how to use threads, but it is important to note that due to the Global Interpreter Lock (GIL) in Python, native threads can only run on a single core\parencite{PythonGIL}. This doesn't mean there are no ways of achieving multi-core threading in Python, as there are libraries such as 'multiprocessing' that allow for the creation of multiple processes that can run on different cores:
+This is again a simple example of how to use threads, but it is important to note that due to the Global Interpreter Lock (GIL) in Python, native threads can only run on a single core\parencite{PythonGIL}. This doesn't mean there are no ways of achieving multi-core threading in Python, as there are libraries such as 'multiprocessing' that allow for the creation of multiple "processes" that can run on different cores:
 
 \begin{verbatim}
 import multiprocessing
@@ -343,7 +344,7 @@ thread = multiprocessing.Process(target=my_process_function)
 thread.start()
 \end{verbatim}
 
-Despite being labeled as processes, these are actually threads utilizing POSIX under the hood\parencite{PythonMultiprocessing} and subject to the same limitations as pthreads. While multi-core threading is easily achieved in Python, the Global Interpreter Lock (GIL) significantly constrains performance improvements\parencite{PythonGIL}. Even when creating multiple processes, the GIL limits their ability to fully leverage multi-core systems—an important consideration when implementing parallel processing in Python. For further details, see: \fullcite{PythonMultiprocessing}
+Despite being labeled as processes, these are actually threads utilizing POSIX under the hood\parencite{PythonMultiprocessing} and subject to the same limitations as pthreads. Whilst multi-core threading is easily achieved in Python, the GIL significantly constraints performance improvements\parencite{PythonGIL}. Even when creating multiple processes, the GIL limits their ability to fully leverage multi-core systems, an important consideration when utilizing parallel processing in Python. For further details, see: \fullcite{PythonMultiprocessing}
 
 \subsection{Threading in Java}
 
@@ -365,9 +366,7 @@ public class Main {
 }
 \end{verbatim}
 
-Java also offers 'Virtual Threads' and 'Platform Threads'\parencite{JavaVirtualThreads}. Virtual Threads are managed by the JVM and mapped to platform threads, without being bound to a single kernel thread. Platform Threads are essentially kernel threads with a Java wrapper, allowing easier JVM management. This architecture provides flexibility in thread execution, though virtual thread performance depends on both the platform threads they map to and the JVM's mapping algorithms.
-
-Java also offers 'Virtual Threads' and 'Platform Threads'\parencite{JavaVirtualThreads}. Virtual Threads are managed by the JVM and mapped to platform threads, without being bound to a single kernel thread. Platform Threads are essentially kernel threads with a Java wrapper, allowing easier JVM management. This architecture provides flexibility in thread execution, though virtual thread performance depends on both the platform threads they map to and the JVM's mapping algorithms.
+Java also offers an abstraction of threads named 'Virtual Threads' and 'Platform Threads'\parencite{JavaVirtualThreads}. Virtual Threads are managed by the JVM and mapped to platform threads, without being bound to a single kernel thread. Platform Threads are essentially kernel threads with a Java wrapper, allowing easier JVM management. This architecture provides flexibility in thread execution, though virtual thread performance depends on both the platform threads they map to and the JVM's mapping algorithms.
 
 For more information on the Java threading library, see the official documentation: \fullcite{JavaThreadClass,JavaVirtualThreads}.
 
@@ -379,9 +378,9 @@ For each experiment, we made sure to check that all four cores were being utiliz
 
 \subsection{Data Collection Process}
 
-We benchmarked execution time by counting from 1 to 1 billion across all languages. For Java, we disabled JIT optimization using the '-Xint' flag to ensure consistent measurements, though this significantly increased execution time compared to other languages except Python.
+We benchmarked execution time by counting from 1 to 1 billion across all languages. For Java, we disabled JIT optimization using the '-Xint' flag to ensure consistent measurements, though this significantly increased execution time compared to other languages, the only exception being Python.
 
-The synchronous benchmark used a simple for-loop with time measurements before and after execution. For asynchronous benchmarks, we had to account for language-specific threading implementations. Despite these differences, all threading implementations followed a similar pattern: creating a function to be executed and passing it to a thread manager.
+The synchronous benchmarks used a simple for-loop with time measurements before and after execution. For asynchronous benchmarks, we had to account for language-specific threading implementations. Despite these differences, all threading implementations followed a similar pattern: creating a function to be executed and passing it to a thread manager.
 
 Throughout testing, thread scheduling, core assignment, and context switching happened "under the hood" without direct programmer control. The OS and language runtime environments handled these aspects automatically, making it impossible to observe exactly how threads were being scheduled or mapped to physical cores.
 
@@ -438,7 +437,7 @@ Java and C\# demonstrate comparable performance improvement patterns, with both 
 
 Python's performance increase of 204\% is notable but more modest, likely reflecting the limitations imposed by the Global Interpreter Lock (GIL). Despite using the multiprocessing library to bypass the GIL, Python still shows performance constraints compared to Java and C\#. This aligns with expectations given Python's higher-level abstraction and interpreter-based execution model.
 
-The surprising finding is C's performance decrease at 76\% of the single core execution when using multiple threads. This counter-intuitive result requires further examination, especially considering that the system monitor confirmed all four cores were being utilized. The POSIX threading implementation in C appears to introduce overhead that outweighs the potential benefits of parallel execution for this specific benchmark task.
+The most surprising finding was that of C's performance decrease at 76\% of the single core execution when using multiple threads. This counter-intuitive result requires further examination, especially considering that the system monitor confirmed all four cores were being utilized. The POSIX threading implementation in C appears to introduce overhead that outweighs the potential benefits of parallel execution for this specific benchmark task.
 
 \subsection{Thread-to-Core Mapping}
 
@@ -446,9 +445,9 @@ In all these test cases, we maintained a consistent approach of creating exactly
 
 \subsection{Performance Scaling Analysis}
 
-Most notably, Java achieved an impressive 382\% performance improvement, coming remarkably close to the theoretical maximum of 400\% (representing perfect utilization of all four cores). This suggests that Java's thread management system is exceptionally efficient at utilizing multiple cores for this particular benchmark task. C\# also performed admirably with a 304\% improvement, while Python achieved a full doubling with 204\%.
+Most notably, Java achieved an impressive 382\% performance improvement, coming remarkably close to the theoretical maximum of 400\% (representing perfect utilization of all four cores). This suggests that Java's thread management system is exceptionally efficient at utilizing multiple cores for this particular benchmark task. C\# also performed admirably with a 304\% improvement, while Python achieved at least a doubling with 204\%.
 
-The near-linear scaling observed in Java indicates that its threading implementation has minimal overhead, allowing it to achieve close to perfect parallelism. This is particularly impressive considering the complexity involved in coordinating multiple threads across cores. The fact that Java can reach 95.5\% of the theoretical maximum efficiency suggests that well-designed thread management systems can effectively overcome many of the traditional barriers to parallel performance.
+The near-linear scaling observed in Java indicates that its threading implementation has surprisingly minimal overhead, allowing it to achieve close to perfect parallelism. This is particularly impressive considering the complexity involved in coordinating multiple threads across cores. The fact that Java can reach 95.5\% of the theoretical maximum efficiency suggests that well-designed thread management systems can effectively overcome many of the traditional barriers to parallel performance.
 
 For the simple task of counting numbers used in our benchmark, the degree of parallelism is naturally high since the work can be easily divided among threads with minimal interdependence. This scenario is ideal for testing the raw capability of threading implementations without the complications of shared memory access or synchronization issues. The near-optimal performance of Java demonstrates that under ideal conditions, modern threading implementations can approach theoretical maximum efficiency.
 
@@ -456,7 +455,8 @@ The stark contrast between Java's near-perfect scaling and C's disappointing 76\
 
 \subsection{Overhead Factors}
 
-Based on the theory and our results, we can say for certain that these factors are generally responsible for the overhead in multi-threading performance:
+Based on the theory and our results, we can then postulate that these factors are generally responsible for the overhead in multi-threading performance:
+
 \begin{itemize}
     \item Thread creation and initialization costs
     \item Context switching between threads
@@ -465,7 +465,7 @@ Based on the theory and our results, we can say for certain that these factors a
     \item Thread synchronization mechanisms
 \end{itemize}
 
-For our test execution specifically, the overhead for shared memory as well as synchronization is minimal, as the counting task is inherently isolated. However there are uncertainties whether libraries introduce additional synchronization or locking mechanisms that could impact performance.
+For our test execution specifically, the overhead for shared memory as well as synchronization is minimal, as the counting task is inherently isolated. However, there are uncertainties whether libraries introduce additional synchronization or locking mechanisms that could impact performance.
 
 In C specifically, the POSIX threading library appears to introduce disproportionate overhead, judging solely by the performance outlier of Python and C, as they both rely on POSIX to schedule threads on Unix systems. As a general-purpose system interface rather than a C-specific library, POSIX may not be optimized for the particular scheduling needs at user-level that C\# and Java exhibit.
 
@@ -481,9 +481,9 @@ This stands opposed to the poor performance of C with POSIX threads, challenging
 
 Our findings highlight the complex relationship between user-level and kernel-level thread management. The near-perfect scaling of Java (382\% improvement on a quad-core system) suggests that its thread management system has solved many of the traditional challenges in bridging application-level threading needs with kernel-level scheduling. This remarkable efficiency indicates that Java's sophisticated user-level scheduling works almost seamlessly with the underlying OS scheduler.
 
-The substantial gap between Java's 382\% and C's 76\% performance with the same number of cores and threads strongly suggests that the mapping strategy between user and kernel threads is critical. Java's virtual threads, which intentionally decouple application threading from kernel threading, appear to offer a superior approach. By allowing many lightweight user threads to be divided amongst a smaller pool of kernel threads, this model delivers nearly optimal resource utilization while maintaining programming simplicity.
+The substantial gap between Java's 382\% and C's 76\% performance with the same number of cores and threads strongly suggests that the mapping strategy between user and kernel threads is critical. Java's virtual threads, which intentionally decouple application threading from kernel threading, appear to offer a superior approach. By allowing many lightweight user threads to be divided amongst a small pool of kernel threads, this model delivers nearly optimal resource utilization while maintaining programming simplicity.
 
-This raises a fundamental question about the design of threading systems: is the two-level approach (user and kernel) optimal, or does it introduce unnecessary complexity and overhead? Java's virtual threads, which intentionally decouple application threading from kernel threading, represent one approach to addressing this issue. By allowing many lightweight user threads to be divided amongst a smaller pool of kernel threads, this model potentially offers better resource utilization while maintaining programming simplicity.
+This raises a fundamental question about the design of threading systems: is the two-level approach (user and kernel) optimal, or does it introduce unnecessary complexity and overhead? Java's virtual threads, which intentionally decouple application threading from kernel threading, represent one approach to addressing this issue. By allowing many lightweight user threads to be divided amongst a small pool of kernel threads, this model potentially offers better resource utilization while maintaining programming simplicity.
 
 \subsection{Benchmark Limitations and Ecological Validity}
 
@@ -493,10 +493,10 @@ If even this highly parallelizable task cannot achieve linear scaling with the n
 
 \subsection{Revisiting Our Hypotheses}
 
-Returning to our initial hypotheses:
+Returning to our initial hypotheses, we can now evaluate them in light of our findings:
 
 \textbf{H1: Threading is simple in theory, but difficult to apply in practice.}
-Our theory and analysis somewhat disagrees with this notion. It was surprisingly easy to apply in practice, as all languages provided a simple way to create threads and run them concurrently across multiple cores right out of the box. In addition to this, the principles of threading were rather straight forward in essence, but it seems quite difficult to figure out how scheduling is carried out, as it varies so much between languages and operating systems. 
+Initally, the principles of threading were rather straightforward, but it seems quite difficult to figure out how scheduling is actually carried out, as it varies so much between languages and operating systems, suggesting it's not as easy as it seems. In addition, our theory proved it was surprisingly easy to apply threads in practice, as all languages provided a simple way to create threads and run them concurrently across multiple cores right out of the box, debunking this hypothesis. 
 
 \textbf{H2: The performance improvements of multi-core threading do not exceed a doubling in performance.}
 This hypothesis is firmly debunked by our results. Java achieved a 382\% improvement and C\# reached 304\%, both far exceeding a mere doubling of performance. Even Python, with its GIL limitations, managed a 204\% improvement. Only C failed to show positive scaling. These results demonstrate that with proper implementation, multi-threading can approach the theoretical maximum improvement equal to the number of cores.
@@ -524,7 +524,7 @@ These implications challenge the notion that increasing parallelism through more
 
 Our investigation into multi-core threading across different programming languages revealed several key insights that directly addressed our research question: "What does multi-core threading offer in terms of performance improvements to different programming languages, and what stops us from utilizing its full potential?"
 
-In terms of performance improvements, our benchmarks demonstrate that multi-core threading can offer substantial gains, with Java achieving a remarkable 382\% improvement—nearly reaching the theoretical maximum of 400\% on our quad-core system. C\# followed with 304\%, and even Python managed 204\% despite its GIL limitations. These results convincingly demonstrate that well-implemented threading can approach almost linear scaling with the number of cores. This directly answers our third sub-question regarding performance increases and deficits across languages.
+In terms of performance improvements, our benchmarks demonstrate that multi-core threading can offer substantial gains, with Java achieving a remarkable 382\% improvement, nearly reaching the theoretical maximum of 400\% on our quad-core system. C\# followed with 304\%, and even Python managed 204\% despite its GIL limitations. These results convincingly demonstrate that well-implemented threading can approach almost linear scaling with the number of cores. This directly answers our third sub-question regarding performance increases and deficits across languages.
 
 Addressing our first sub-question about parallel systems, we've shown that a parallel system is one that can execute multiple instructions simultaneously across processing units. Threads serve as the fundamental building blocks of such systems by providing independent execution contexts that share memory space. Our benchmarks confirm that threads effectively enable parallelism, though their implementation efficiency varies significantly by language.
 
